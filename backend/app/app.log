@@ -1,0 +1,38 @@
+2024-11-30 09:02:46,829 - main - INFO - Processing order 1f1d67ed-34bf-479f-a51f-2e48d9b4e712 for game 1dc9b5b7-c27b-4a01-bb5e-a7f80cb45104
+2024-11-30 09:02:46,829 - main - INFO - Wait time: 0 minutes
+2024-11-30 09:02:46,829 - main - INFO - Wrong item served: AI Generated Item 1
+2024-11-30 09:02:46,829 - main - INFO - Wrong item served: AI Generated Item 2
+2024-11-30 09:02:46,829 - main - INFO - Random violation added: GLUTEN
+2024-11-30 09:02:46,829 - main - INFO - Processing violation: GLUTEN
+2024-11-30 09:02:49,567 - main - INFO - Generated new consequence for GLUTEN
+2024-11-30 09:02:49,567 - main - INFO - Order 1f1d67ed-34bf-479f-a51f-2e48d9b4e712 failed with consequences
+2024-11-30 09:02:52,985 - main - INFO - Processing order e270cd16-b1e9-494d-afe7-3946ddce76c4 for game 1dc9b5b7-c27b-4a01-bb5e-a7f80cb45104
+2024-11-30 09:02:52,986 - main - INFO - Wait time: 0 minutes
+2024-11-30 09:02:52,986 - main - INFO - Wrong item served: Wrong Item 1
+2024-11-30 09:02:52,991 - main - INFO - Wrong item served: Wrong Item 2
+2024-11-30 09:02:52,993 - main - INFO - Processing violation: GLUTEN
+2024-11-30 09:02:52,993 - main - INFO - Using cached consequence for GLUTEN
+2024-11-30 09:02:52,994 - main - INFO - Order e270cd16-b1e9-494d-afe7-3946ddce76c4 failed with consequences
+2024-11-30 09:02:54,225 - main - INFO - Processing order invalid-order for game 1dc9b5b7-c27b-4a01-bb5e-a7f80cb45104
+2024-11-30 09:02:55,973 - main - INFO - Processing order 770b7d6f-2f78-4932-96de-dac2822d5975 for game 2375e87f-c652-4ad6-9be5-e98ff487e1bf
+2024-11-30 09:02:55,974 - main - INFO - Wait time: 0 minutes
+2024-11-30 09:02:55,974 - main - INFO - Wrong item served: Test Item 1
+2024-11-30 09:02:55,974 - main - INFO - Wrong item served: Test Item 2
+2024-11-30 09:02:55,974 - main - INFO - Processing violation: GLUTEN
+2024-11-30 09:02:55,974 - main - INFO - Using cached consequence for GLUTEN
+2024-11-30 09:02:55,974 - main - INFO - Order 770b7d6f-2f78-4932-96de-dac2822d5975 failed with consequences
+2024-11-30 09:02:59,987 - main - INFO - Processing order e679d759-82d9-4495-b8fd-564f3d37f446 for game 2375e87f-c652-4ad6-9be5-e98ff487e1bf
+2024-11-30 09:02:59,988 - main - INFO - Wait time: 0 minutes
+2024-11-30 09:02:59,988 - main - INFO - Wrong item served: Test Item 1
+2024-11-30 09:02:59,988 - main - INFO - Wrong item served: Test Item 2
+2024-11-30 09:02:59,988 - main - INFO - Random violation added: GLUTEN
+2024-11-30 09:02:59,988 - main - INFO - Processing violation: GLUTEN
+2024-11-30 09:02:59,988 - main - INFO - Using cached consequence for GLUTEN
+2024-11-30 09:02:59,988 - main - INFO - Order e679d759-82d9-4495-b8fd-564f3d37f446 failed with consequences
+2024-11-30 09:03:04,357 - main - INFO - Processing order 11c835b3-9eb0-4b7c-8f4b-b63d2e06b89c for game 2375e87f-c652-4ad6-9be5-e98ff487e1bf
+2024-11-30 09:03:04,357 - main - INFO - Wait time: 0 minutes
+2024-11-30 09:03:04,357 - main - INFO - Wrong item served: Test Item 1
+2024-11-30 09:03:04,357 - main - INFO - Wrong item served: Test Item 2
+2024-11-30 09:03:04,358 - main - INFO - Processing violation: GLUTEN
+2024-11-30 09:03:04,358 - main - INFO - Using cached consequence for GLUTEN
+2024-11-30 09:03:04,358 - main - INFO - Order 11c835b3-9eb0-4b7c-8f4b-b63d2e06b89c failed with consequences
