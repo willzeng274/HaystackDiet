@@ -37,7 +37,7 @@ logger.addHandler(stream_handler)
 load_dotenv()
 
 app = FastAPI(title="AI Food Game Backend")
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = openai.AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app.add_middleware(
     CORSMiddleware,
@@ -162,6 +162,7 @@ consequence_cache: Dict[str, Dict] = {}
 
 class CustomerManager:
     def __init__(self):
+        
         self.personality_weights = {
             PersonalityTrait.KAREN: {
                 "complaint_chance": 0.8,
@@ -178,35 +179,66 @@ class CustomerManager:
             # Add other personality weights...
         }
 
+
+    # Then modify the generate_customer_profile method
     async def generate_customer_profile(self) -> CustomerProfile:
         """Generate a new customer profile using AI"""
-        prompt = """Generate a unique restaurant customer profile with:
-        1. Two personality traits
-        2. 1-2 dietary restrictions
-        3. A patience level (1-10)
-        4. A tip tendency (0-0.5)
+        print("\n=== Generating Customer Profile ===")
         
-        Respond in JSON format."""
+        try:
+            print("Calling OpenAI API for customer profile...")
+            response = await client.chat.completions.create(
+                model="gpt-4-1106-preview",
+                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": "You are creating customer profiles for a restaurant game. Return only valid JSON."},
+                    {"role": "user", "content": """Generate a customer profile with:
+                        {
+                            "personality_traits": ["PATIENT", "FOODIE"],
+                            "dietary_restrictions": ["GLUTEN"],
+                            "patience_level": 7,
+                            "tip_tendency": 0.15
+                        }
+                        Only use valid personality traits and restrictions from the enums."""}
+                ]
+            )
+            
+            print("OpenAI Response received")
+            content = response.choices[0].message.content
+            print(f"Raw response: {content}")
+            
+            # Parse the response
+            data = json.loads(content)
+            print(f"Parsed data: {data}")
+            
+            # Validate enum values
+            valid_traits = [trait for trait in data["personality_traits"] if trait in PersonalityTrait.__members__]
+            valid_restrictions = [rest for rest in data["dietary_restrictions"] if rest in RestrictionType.__members__]
+            
+            return CustomerProfile(
+                id=str(uuid.uuid4()),
+                name=f"Customer_{random.randint(1000, 9999)}",
+                personality_traits=valid_traits or [PersonalityTrait.REGULAR],
+                dietary_restrictions=valid_restrictions or [RestrictionType.GLUTEN],
+                patience_threshold=min(max(1, data.get("patience_level", 5)), 10),
+                tip_tendency=min(max(0, data.get("tip_tendency", 0.15)), 0.5)
+            )
+            
+        except Exception as e:
+            print(f"\n=== Error in generate_customer_profile ===")
+            print(f"Exception type: {type(e)}")
+            print(f"Error message: {str(e)}")
+            
+            # Return a default customer profile on error
+            return CustomerProfile(
+                id=str(uuid.uuid4()),
+                name=f"Customer_{random.randint(1000, 9999)}",
+                personality_traits=[PersonalityTrait.REGULAR],
+                dietary_restrictions=[RestrictionType.GLUTEN],
+                patience_threshold=5,
+                tip_tendency=0.15
+            )
 
-        response = await client.chat.completions.create(
-            model="gpt-4-1106-preview",
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": "You are creating customer profiles for a restaurant game"},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        data = response.choices[0].message.content
-        
-        return CustomerProfile(
-            id=str(uuid.uuid4()),
-            name=f"Customer_{random.randint(1000, 9999)}",
-            personality_traits=data["personality_traits"],
-            dietary_restrictions=data["dietary_restrictions"],
-            patience_threshold=data["patience_level"],
-            tip_tendency=data["tip_tendency"]
-        )
 
     def calculate_satisfaction(
         self,
@@ -237,6 +269,8 @@ class CustomerManager:
 async def generate_menu_items(restrictions: List[RestrictionType]) -> List[MenuItem]:
     """Generate menu items using AI based on dietary restrictions"""
     restrictions_str = ", ".join([r.value for r in restrictions])
+    print(f"\n=== Generating Menu Items ===")
+    print(f"Restrictions: {restrictions_str}")
     
     prompt = f"""Generate 3 creative food items that would be safe for someone with these dietary restrictions: {restrictions_str}.
     For each item, provide:
@@ -258,6 +292,7 @@ async def generate_menu_items(restrictions: List[RestrictionType]) -> List[MenuI
     }}"""
 
     try:
+        print("Calling OpenAI API...")
         response = await client.chat.completions.create(
             model="gpt-4-1106-preview",
             response_format={"type": "json_object"},
@@ -267,11 +302,16 @@ async def generate_menu_items(restrictions: List[RestrictionType]) -> List[MenuI
             ]
         )
         
+        print("OpenAI Response received")
         content = response.choices[0].message.content
+        print(f"Raw API Response: {content}")
+        
         data = json.loads(content)  # Parse the JSON response
+        print(f"Parsed JSON data: {json.dumps(data, indent=2)}")
         
         menu_items = []
         for item in data.get("items", []):
+            print(f"Processing menu item: {item}")
             menu_items.append(MenuItem(
                 name=item["name"],
                 description=item["description"],
@@ -280,9 +320,12 @@ async def generate_menu_items(restrictions: List[RestrictionType]) -> List[MenuI
                 preparation_time=int(item["preparation_time"])
             ))
         
+        print(f"Generated {len(menu_items)} menu items")
         return menu_items
     except Exception as e:
-        print(f"Error generating menu items: {e}")
+        print(f"\n=== Error in generate_menu_items ===")
+        print(f"Exception type: {type(e)}")
+        print(f"Error message: {str(e)}")
         print(f"API Response: {response.choices[0].message.content if response else 'No response'}")
         # Return some fallback menu items
         return [
@@ -305,7 +348,7 @@ async def generate_consequence(violation: RestrictionType) -> Dict:
     4. A monetary penalty
     5. A score impact
     
-    Return ONLY a valid JSON object in this exact format:
+    Return ONLY a valid JSON object in this exact format do not include ``` or any other characters:
     {{
         "consequence": {{
             "description": "funny description here",
@@ -356,41 +399,63 @@ async def start_game():
 
 @app.post("/game/{game_id}/generate-order")
 async def generate_order(game_id: str):
+    print(f"\n=== Generating Order for Game {game_id} ===")
+    
     if game_id not in games:
+        print(f"Game {game_id} not found")
         raise HTTPException(status_code=404, detail="Game not found")
     
     game = games[game_id]
+    print("Game found, generating customer profile...")
     
-    # Generate customer profile
-    customer = await customer_manager.generate_customer_profile()
-    game.customers[customer.id] = customer
-    
-    # Generate menu items for restrictions
-    menu_key = ",".join(sorted([r.value for r in customer.dietary_restrictions]))
-    if menu_key not in menu_cache:
-        menu_cache[menu_key] = await generate_menu_items(customer.dietary_restrictions)
-    
-    menu_items = menu_cache[menu_key]
-    
-    # Create order
-    order = Order(
-        id=str(uuid.uuid4()),
-        customer_id=customer.id,
-        customer_profile=customer,
-        restrictions=customer.dietary_restrictions,
-        items_ordered=[item.name for item in menu_items],
-        status=OrderStatus.PENDING,
-        created_at=datetime.now(),
-        total_price=sum(item.price for item in menu_items)
-    )
-    
-    game.active_orders.append(order)
-    
-    return {
-        "order": order,
-        "menu_items": menu_items,
-        "customer": customer
-    }
+    try:
+        # Generate customer profile
+        customer = await customer_manager.generate_customer_profile()
+        print(f"Customer generated: {customer.id}")
+        game.customers[customer.id] = customer
+        
+        # Generate menu items
+        menu_key = ",".join(sorted([r.value for r in customer.dietary_restrictions]))
+        print(f"Menu key: {menu_key}")
+        
+        if menu_key not in menu_cache:
+            print("Menu not in cache, generating new menu items...")
+            menu_cache[menu_key] = await generate_menu_items(customer.dietary_restrictions)
+        else:
+            print("Using cached menu items")
+        
+        menu_items = menu_cache[menu_key]
+        print(f"Menu items: {[item.name for item in menu_items]}")
+        
+        # Create order
+        order = Order(
+            id=str(uuid.uuid4()),
+            customer_id=customer.id,
+            customer_profile=customer,
+            restrictions=customer.dietary_restrictions,
+            items_ordered=[item.name for item in menu_items],
+            status=OrderStatus.PENDING,
+            created_at=datetime.now(),
+            total_price=sum(item.price for item in menu_items)
+        )
+        
+        print(f"Created order: {order.id}")
+        game.active_orders.append(order)
+        
+        response_data = {
+            "order": order,
+            "menu_items": menu_items,
+            "customer": customer
+        }
+        print(f"Returning response with order ID: {order.id}")
+        return response_data
+        
+    except Exception as e:
+        print(f"\n=== Error in generate_order endpoint ===")
+        print(f"Exception type: {type(e)}")
+        print(f"Error message: {str(e)}")
+        logger.error(f"Error generating order: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error generating order: {str(e)}")
 
 
 
@@ -402,6 +467,8 @@ async def serve_order(
 ):
     """Handle serving an order to a customer with complete error handling and consequence generation"""
     try:
+        logger.info(f"Processing order {order_id} for game {game_id}")
+        
         # Validate game exists
         if game_id not in games:
             raise HTTPException(status_code=404, detail="Game not found")
@@ -416,6 +483,7 @@ async def serve_order(
         # Calculate wait time
         wait_time = (datetime.now() - order.created_at).seconds // 60
         order.wait_time = wait_time
+        logger.info(f"Wait time: {wait_time} minutes")
         
         # Get customer profile
         customer = game.customers.get(order.customer_id)
@@ -424,26 +492,44 @@ async def serve_order(
         
         # Check for dietary violations
         violations = []
+        
+        # Check if served items match ordered items
         for item in request.items_served:
             if item not in order.items_ordered:
-                violations.append("WRONG_ITEM")
-            # Add additional violation checks here
+                logger.info(f"Wrong item served: {item}")
+                violations.append(RestrictionType.GLUTEN)  # Convert string to enum
         
-        # Random violation for demo (replace with actual logic)
-        if random.random() < 0.3:
-            violations.append(random.choice(order.restrictions))
+        # Random violation for demo (customize based on your game logic)
+        if random.random() < 0.3 and order.restrictions:
+            violation_type = random.choice(order.restrictions)
+            if isinstance(violation_type, str):
+                try:
+                    violations.append(RestrictionType[violation_type])
+                    logger.info(f"Random violation added: {violation_type}")
+                except KeyError:
+                    logger.warning(f"Invalid restriction type: {violation_type}")
+            else:
+                violations.append(violation_type)
         
         if violations:
             # Handle violation
-            violation = violations[0]  # Take first violation
+            violation = violations[0]  # Get first violation
+            logger.info(f"Processing violation: {violation}")
             
             try:
+                # Ensure violation is RestrictionType enum
+                if isinstance(violation, str):
+                    violation = RestrictionType[violation]
+                
                 # Get or generate consequence
-                if violation not in consequence_cache:
+                consequence_key = violation.value
+                if consequence_key not in consequence_cache:
                     consequence = await generate_consequence(violation)
-                    consequence_cache[violation] = consequence
+                    consequence_cache[consequence_key] = consequence
+                    logger.info(f"Generated new consequence for {violation}")
                 else:
-                    consequence = consequence_cache[violation]
+                    consequence = consequence_cache[consequence_key]
+                    logger.info(f"Using cached consequence for {violation}")
                 
                 # Calculate satisfaction
                 satisfaction = max(0, min(100, 50 - len(violations) * 20))
@@ -461,6 +547,16 @@ async def serve_order(
                         )
                     )
                 
+                # Update customer mood based on satisfaction
+                if satisfaction < 30:
+                    customer.current_mood = MoodState.ANGRY
+                elif satisfaction < 50:
+                    customer.current_mood = MoodState.ANNOYED
+                elif satisfaction < 70:
+                    customer.current_mood = MoodState.NEUTRAL
+                else:
+                    customer.current_mood = MoodState.HAPPY
+                
                 # Update game state
                 game.score = max(0, game.score + consequence["score_impact"])
                 game.money = max(0, game.money + consequence["money_impact"])
@@ -468,7 +564,7 @@ async def serve_order(
                 
                 game.mistakes.append({
                     "order_id": order_id,
-                    "violation": violation,
+                    "violation": violation.value,
                     "consequence": consequence["description"],
                     "timestamp": datetime.now().isoformat()
                 })
@@ -476,6 +572,8 @@ async def serve_order(
                 # Update order status
                 order.status = OrderStatus.FAILED
                 game.active_orders = [o for o in game.active_orders if o.id != order_id]
+                
+                logger.info(f"Order {order_id} failed with consequences")
                 
                 return {
                     "success": False,
@@ -487,31 +585,49 @@ async def serve_order(
                         "money": game.money,
                         "reputation": game.reputation,
                         "mistakes": len(game.mistakes),
-                        "completed_orders": game.completed_orders
+                        "completed_orders": game.completed_orders,
+                        "active_orders": len(game.active_orders)
                     }
                 }
                 
             except Exception as e:
-                logger.error(f"Error processing violation: {str(e)}")
+                logger.error(f"Error processing violation: {str(e)}", exc_info=True)
                 raise HTTPException(status_code=500, detail="Error processing violation")
         
         else:
             # Successful order
             try:
+                logger.info(f"Processing successful order {order_id}")
+                
                 # Calculate base satisfaction
                 base_satisfaction = 80 - (wait_time * 2)  # Decrease satisfaction for wait time
                 
                 # Apply customer personality modifiers
-                if "IMPATIENT" in customer.personality_traits:
+                if PersonalityTrait.IMPATIENT in customer.personality_traits:
                     base_satisfaction -= wait_time * 3
-                if "FOODIE" in customer.personality_traits:
+                if PersonalityTrait.FOODIE in customer.personality_traits:
                     base_satisfaction += 10
+                if PersonalityTrait.PATIENT in customer.personality_traits:
+                    base_satisfaction += 5
                 
                 satisfaction = max(0, min(100, base_satisfaction))
+                
+                # Update customer mood
+                if satisfaction > 80:
+                    customer.current_mood = MoodState.HAPPY
+                elif satisfaction > 60:
+                    customer.current_mood = MoodState.NEUTRAL
+                else:
+                    customer.current_mood = MoodState.ANNOYED
                 
                 # Calculate tip based on satisfaction and customer profile
                 base_tip = order.total_price * customer.tip_tendency
                 tip_multiplier = satisfaction / 100
+                if PersonalityTrait.GENEROUS in customer.personality_traits:
+                    tip_multiplier *= 1.5
+                if PersonalityTrait.KAREN in customer.personality_traits:
+                    tip_multiplier *= 0.5
+                
                 tip = base_tip * tip_multiplier
                 
                 # Update customer profile
@@ -522,6 +638,10 @@ async def serve_order(
                     for item in request.items_served:
                         if item not in customer.favorite_items:
                             customer.favorite_items.append(item)
+                elif satisfaction < 40:
+                    for item in request.items_served:
+                        if item not in customer.disliked_items:
+                            customer.disliked_items.append(item)
                 
                 # Add review for highly satisfied or unsatisfied customers
                 if satisfaction > 90 or satisfaction < 30:
@@ -540,10 +660,14 @@ async def serve_order(
                 game.money += order.total_price + tip
                 game.completed_orders += 1
                 game.reputation = min(100, game.reputation + (satisfaction - 50) / 20)
+                game.daily_customers_served += 1
+                game.total_customers_served += 1
                 game.active_orders = [o for o in game.active_orders if o.id != order_id]
                 
                 # Update order status
                 order.status = OrderStatus.SERVED
+                
+                logger.info(f"Order {order_id} completed successfully")
                 
                 return {
                     "success": True,
@@ -555,23 +679,30 @@ async def serve_order(
                     },
                     "customer_satisfaction": satisfaction,
                     "customer_mood": customer.current_mood,
+                    "customer_stats": {
+                        "favorite_items": customer.favorite_items,
+                        "total_spent": customer.total_spent,
+                        "satisfaction_history": customer.satisfaction_history
+                    },
                     "game_state": {
                         "score": game.score,
                         "money": game.money,
                         "reputation": game.reputation,
                         "completed_orders": game.completed_orders,
-                        "active_orders": len(game.active_orders)
+                        "active_orders": len(game.active_orders),
+                        "daily_customers_served": game.daily_customers_served,
+                        "total_customers_served": game.total_customers_served
                     }
                 }
                 
             except Exception as e:
-                logger.error(f"Error processing successful order: {str(e)}")
+                logger.error(f"Error processing successful order: {str(e)}", exc_info=True)
                 raise HTTPException(status_code=500, detail="Error processing successful order")
     
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Unexpected error in serve_order: {str(e)}")
+        logger.error(f"Unexpected error in serve_order: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
     
 @app.get("/game/{game_id}/state")
