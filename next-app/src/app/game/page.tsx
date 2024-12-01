@@ -176,7 +176,7 @@ function FloatingText() {
 
   return currFoods[currFood as Restriction] && (
     <group ref={cameraRef}>
-      <group position={[2, -0.6, -2]}>
+      <group position={[1.5, -0.6, -2]}>
         <Html transform>
           <div
             style={{
@@ -186,6 +186,10 @@ function FloatingText() {
               padding: '10px',
               borderRadius: '5px',
               pointerEvents: 'none',
+              maxWidth: '100px',
+              wordWrap: 'break-word',
+              whiteSpace: 'pre-wrap',
+              textAlign: 'center',
             }}
           >
             {currFoods[currFood as Restriction].name}
@@ -253,6 +257,8 @@ export default function Game() {
   const currFood = useHorseStore((state) => state.currFood);
   const health = useHorseStore((state) => state.health);
   const score = useHorseStore((state) => state.score);
+  // const setFoods = useFoodStore((state) => state.setFoods);
+  // const actualFoods = useFoodStore((state) => state.foods);
 
   const foods = useMemo(() => Object.entries(currFoods).sort(() => Math.random() - 0.5) as [Restriction, IFood][], [currFoods]);
 
@@ -268,7 +274,7 @@ export default function Game() {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
-    utterance.rate = 2.5; // Speed (0.1 to 10)
+    utterance.rate = 2; // Speed (0.1 to 10)
     utterance.pitch = Math.random() * 2; // Pitch (0 to 2)
     utterance.volume = 1; // Volume (0 to 1)
 
@@ -285,10 +291,6 @@ export default function Game() {
     }
     // if (horses && horses.length > 0 && dialogueActive) readTextAloud(`Hello! I would like to get something ${horses[0].restriction.toLowerCase()} please and thanks.`);
   }, [dialogueActive]);
-
-  useEffect(() => {
-    console.log("Foods: ", foods);
-  }, [foods]);
 
   return (
     <div className="w-screen h-screen">

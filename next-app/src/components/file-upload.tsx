@@ -43,7 +43,7 @@ export function FileUpload({ onUpload, dayCount, setDietaryData }: { onUpload: (
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-4">
       <Label htmlFor="csvFile" className="text-lg font-semibold">Upload CSV File</Label>
       <div className="flex flex-col items-center space-x-2">
         <UploadButton onChange={handleFileChange} />

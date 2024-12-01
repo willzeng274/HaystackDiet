@@ -12,6 +12,7 @@ import { StatisticsDisplay } from '@/components/statistics-display'
 import { MealSchedule } from '@/components/meal-schedule'
 import AutoCompleteInput from '@/components/autocomplete'
 import { BackgroundBeamsWithCollision } from '@/components/ui/background-beams-with-collision'
+import { JsonUpload } from '@/components/json-upload'
 
 export default function PlanEvent() {
   const [step, setStep] = useState(1)
@@ -27,9 +28,6 @@ export default function PlanEvent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 dark:from-purple-900 dark:via-pink-900 dark:to-red-900 p-8">
-      <div className="absolute inset-0 w-full h-screen">
-        <BackgroundBeamsWithCollision />
-      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -63,7 +61,7 @@ export default function PlanEvent() {
             <TabsContent value="manual">
               <Card>
                 <CardContent className="pt-6">
-                  
+                  <JsonUpload />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -141,6 +141,15 @@ export function MealSchedule({
         });
       })
     });
+    // check if any list of newFoods is empty, if so then add a placeholder food
+    Object.keys(newFoods).forEach((key: string) => {
+      if (newFoods[key as Restriction].length === 0) {
+        newFoods[key as Restriction].push({
+          name: key.toLowerCase().charAt(0).toUpperCase() + key.toLowerCase().slice(1),
+          restriction: key as Restriction,
+        });
+      }
+    });
     console.log(newFoods);
     setFoods(newFoods);
     regenCurrFoods();
