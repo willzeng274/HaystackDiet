@@ -12,12 +12,14 @@ import { DietaryRestrictionSelector } from '@/components/dietary-restriction-sel
 import { FileUpload } from '@/components/file-upload'
 import { StatisticsDisplay } from '@/components/statistics-display'
 import { MealSchedule } from '@/components/meal-schedule'
+import AutoCompleteInput from '@/components/autocomplete'
 
 export default function PlanEvent() {
   const [step, setStep] = useState(1)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [mealCount, setMealCount] = useState(3)
   const [dietaryData, setDietaryData] = useState<any>(null)
+  const [coordinates, setCoordinates] = useState<[number, number] | null>(null)
   const router = useRouter()
 
   const handleFileUpload = (file: File) => {
@@ -62,6 +64,7 @@ export default function PlanEvent() {
                     min={1}
                     max={10}
                   />
+                  <AutoCompleteInput setCoordinates />
                   <FileUpload onUpload={handleFileUpload} dayCount={mealCount} setDietaryData={setDietaryData} />
                 </CardContent>
               </Card>
