@@ -73,3 +73,93 @@
 2024-11-30 09:03:04,358 - main - INFO - Processing violation: GLUTEN
 2024-11-30 09:03:04,358 - main - INFO - Using cached consequence for GLUTEN
 2024-11-30 09:03:04,358 - main - INFO - Order 11c835b3-9eb0-4b7c-8f4b-b63d2e06b89c failed with consequences
+2024-12-01 03:56:20,588 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 03:56:39,048 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 03:59:39,686 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 03:59:58,204 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:01:31,737 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:01:50,827 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:02:52,754 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:03:11,529 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:04:52,264 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:05:07,800 - main - ERROR - Error generating meal plan: Invalid format specifier ' "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+' for object of type 'str'
+2024-12-01 04:37:46,891 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 04:38:16,831 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 04:43:50,200 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:31:25,627 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:31:55,616 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:37:18,228 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:40:21,638 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:40:51,705 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:44:14,113 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:44:44,277 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:49:24,089 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:49:24,271 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:52:21,023 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:52:21,088 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:57:03,392 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 05:57:03,436 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 06:07:55,373 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 06:07:55,517 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 06:12:31,046 - main - ERROR - Error generating meal plan: Request timed out.
+2024-12-01 06:12:31,155 - main - ERROR - Error generating meal plan: Request timed out.

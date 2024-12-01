@@ -4,7 +4,7 @@ import { TextureLoader } from 'three';
 import * as THREE from 'three';
 
 export const Ground = () => {
-  const texture = useLoader(TextureLoader, '/grass.jpg');
+  const texture = useLoader(TextureLoader, '/grass_2.jpg');
 
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(500, 500);

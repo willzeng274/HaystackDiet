@@ -168,4 +168,4 @@ export function Table(props: any) {
   )
 }
 
-useGLTF.preload('/Folding Table.glb')
+useGLTF.preload('/table.glb')

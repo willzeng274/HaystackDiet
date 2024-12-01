@@ -506,6 +506,7 @@ class RestaurantMenuFinder:
         except Exception as e:
             logger.error(f"Error in find_restaurant_menus: {e}")
             return []
+    
 def get_restaurant_menus(longitude: float, latitude: float) -> List[Dict]:
     finder = RestaurantMenuFinder(os.getenv("GOOGLE_API_KEY"), os.getenv("OPENAI_API_KEY"))
     restaurants = finder.find_restaurant_menus(latitude, longitude)
@@ -584,6 +585,7 @@ def concurrent_find_restaurant_menus(longitude: float, latitude: float):
         json.dump(unique_results, f, indent=2)
     
     return unique_results
+
 
 def main():
     # Example coordinates (London, Ontario)
