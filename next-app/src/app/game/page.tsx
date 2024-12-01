@@ -26,6 +26,7 @@ import { BuildingLg } from './models/building_lg';
 import { Crops } from './models/crops';
 import { Haystack } from './models/haystack';
 import { BuildingMd } from './models/building_md';
+import { useRouter } from 'next/navigation';
 
 const Crosshair = () => (
   <div
@@ -257,6 +258,14 @@ export default function Game() {
   const currFood = useHorseStore((state) => state.currFood);
   const health = useHorseStore((state) => state.health);
   const score = useHorseStore((state) => state.score);
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (health == 0) {
+      alert("Game Over! Your final score is: " + score);
+      router.push("/");
+    }
+  }, [health]);
   // const setFoods = useFoodStore((state) => state.setFoods);
   // const actualFoods = useFoodStore((state) => state.foods);
 

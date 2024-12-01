@@ -245,6 +245,7 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         # AI pipeline
         llm_response = find_diet_columns(df.columns)
         array = df.values
+        array2 = pd.read_csv(io.StringIO(csv_data), header=None).values
         # Check that the column json has the property is_single_dietary_field set to true
         #{
         # "is_single_dietary_field": false,
@@ -264,14 +265,27 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         # personCount: 100 
         # nut: 12
         # }
+
+        foundColumn = 0 
+        for row in array2: 
+            columnCount = 0
+            for entry in row: 
+                if str(entry) in llm_response["single_dietary_field"]: 
+                    foundColumn = columnCount
+                columnCount += 1
+        print("FOUND COLUMN", foundColumn)
+        
         personCount = 0; 
         if llm_response["is_single_dietary_field"]:  
             for row in array: 
+                columnCount = 0
                 for entry in row: 
-                    if (entry.strip().upper() in restriction_words): 
+                    print("ENTRY ", entry, " COUNT", columnCount)
+                    if (str(entry).strip().upper() in restriction_words) and columnCount == foundColumn: 
                         restriction_count[entry.strip()] += 1
-                    else: 
+                    elif (columnCount == foundColumn): 
                         personCount += 1 
+                    columnCount += 1
         else: 
             print("Several fields, we will not handle this in the demo ;)") # we arent doing this yet! 
 
