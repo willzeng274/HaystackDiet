@@ -109,12 +109,39 @@ class MealPlan(BaseModel):
     meals: Dict[str, List[Dict[str, any]]]
 
 
-@app.post("/generate-meal") 
+from pydantic import BaseModel
+from typing import List
+
+# Define the meal item structure
+class MealItem(BaseModel):
+    dietary_restriction: str
+    restaurant: str
+    item: str
+    price: float
+    people_count: int
+    is_special_request: bool
+
+# Define the structure for each meal time
+class MealTimeItems(BaseModel):
+    breakfast: List[MealItem]
+    lunch: List[MealItem]
+    dinner: List[MealItem]
+
+# Define the structure for each day's meal plan
+class DayPlan(BaseModel):
+    day: int
+    meals: MealTimeItems
+
+# Define the overall meal plan structure
+class MealPlanResponse(BaseModel):
+    meal_plans: List[DayPlan]
+
+@app.post("/generate-meal")
 async def generate_meal_schedule(response: GenerateMealResponse):
     try:
         restaurantData = get_restaurant_menus(response.long, response.lat)
         
-        # Simplify restaurant data to reduce prompt size
+        # Simplify restaurant data
         simplified_menu = []
         for restaurant in restaurantData:
             menu_items = []
@@ -148,51 +175,24 @@ Rules:
 4. Price ranges: Breakfast $8-15, Lunch $12-25, Dinner $15-35
 
 Available Restaurants:
-{json.dumps(simplified_menu, indent=2)}
+{json.dumps(simplified_menu, indent=2)}"""
 
-Return JSON format:
-{{
-    "meal_plans": [
-        {{
-            "day": number,
-            "meals": {{
-                "breakfast": [
-                    {{
-                        "dietary_restriction": string,
-                        "restaurant": string,
-                        "item": string,
-                        "price": number,
-                        "people_count": number,
-                        "is_special_request": boolean
-                    }}
-                ],
-                "lunch": [...],
-                "dinner": [...]
-            }}
-        }}
-    ]
-}}"""
-
-        completion = await client.chat.completions.create(
-            model="gpt-3.5-turbo-1106",
-            response_format={ "type": "json_object" },
+        completion = await client.beta.chat.completions.parse(
+            model="gpt-4o-2024-08-06",
             messages=[
                 {"role": "system", "content": "You are a meal planning assistant that creates detailed meal plans based on restaurant data and dietary restrictions."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.7,
-            timeout=30.0  # Set timeout to 30 seconds
+            response_format=MealPlanResponse
         )
-        
-        meal_plan = json.loads(completion.choices[0].message.content)
-        return meal_plan
+        print(completion.choices[0].message.parsed)
+        return completion.choices[0].message.parsed
 
     except Exception as e:
         logger.error(f"Error generating meal plan: {str(e)}")
-        # Generate a basic fallback meal plan
         fallback_plan = generate_fallback_meal_plan(response)
         return fallback_plan
-
+    
 def generate_fallback_meal_plan(response):
     """Generate a basic meal plan when the API fails"""
     meal_plans = []
