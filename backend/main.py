@@ -185,7 +185,6 @@ Available Restaurants:
             ],
             response_format=MealPlanResponse
         )
-        print(completion.choices[0].message.parsed)
         return completion.choices[0].message.parsed
 
     except Exception as e:
