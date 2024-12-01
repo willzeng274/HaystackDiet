@@ -15,7 +15,7 @@ const loadGoogleMapsScript = (apiKey, callback) => {
   document.head.appendChild(script);
 };
 
-const AutoCompleteInput = ( setCoordinates ) => {
+const AutoCompleteInput = ( { setCoordinates }: { setCoordinates: any } ) => {
   const autocompleteInputRef = useRef(null);
 
   useEffect(() => {

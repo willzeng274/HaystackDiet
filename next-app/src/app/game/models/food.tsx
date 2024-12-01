@@ -41,7 +41,7 @@ export function Food(props: any) {
         center
       >
         <div className="p-4 bg-white bg-opacity-50 pointer-events-none">
-          <h1 className="text-2xl text-center">{props.food.name}</h1>
+          <h1 className="text-2xl text-center">{props.food ? props.food.name : "None"}</h1>
         </div>
       </Html>
       <mesh

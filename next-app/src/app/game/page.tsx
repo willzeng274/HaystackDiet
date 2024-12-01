@@ -286,6 +286,10 @@ export default function Game() {
     // if (horses && horses.length > 0 && dialogueActive) readTextAloud(`Hello! I would like to get something ${horses[0].restriction.toLowerCase()} please and thanks.`);
   }, [dialogueActive]);
 
+  useEffect(() => {
+    console.log("Foods: ", foods);
+  }, [foods]);
+
   return (
     <div className="w-screen h-screen">
       {dialogueActive && (

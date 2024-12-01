@@ -2,13 +2,11 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import DietaryRestrictionSelector from '@/components/dietary-restriction-selector'
 import { FileUpload } from '@/components/file-upload'
 import { StatisticsDisplay } from '@/components/statistics-display'
 import { MealSchedule } from '@/components/meal-schedule'
@@ -20,22 +18,11 @@ export default function PlanEvent() {
   const [mealCount, setMealCount] = useState(3)
   const [dietaryData, setDietaryData] = useState<any>(null)
   const [coordinates, setCoordinates] = useState<[number, number] | null>(null)
-  const router = useRouter()
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file)
     // TODO: Process the CSV file and set dietaryData
     setStep(2)
-  }
-
-  const handleManualSelection = (data: any) => {
-    // setDietaryData(data)
-    console.log("Manual selection data", data);
-    // setStep(2)
-  }
-
-  const handleConfirm = () => {
-    router.push('/game')
   }
 
   return (
@@ -50,7 +37,7 @@ export default function PlanEvent() {
           <Tabs defaultValue="csv" className="w-full max-w-3xl mx-auto">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="csv">Upload CSV</TabsTrigger>
-              <TabsTrigger value="manual">Manual Selection</TabsTrigger>
+              <TabsTrigger value="manual">Continue from model</TabsTrigger>
             </TabsList>
             <TabsContent value="csv">
               <Card>
@@ -65,7 +52,7 @@ export default function PlanEvent() {
                     min={1}
                     max={10}
                   />
-                  <AutoCompleteInput setCoordinates />
+                  <AutoCompleteInput setCoordinates={setCoordinates} />
                   <FileUpload onUpload={handleFileUpload} dayCount={mealCount} setDietaryData={setDietaryData} />
                 </CardContent>
               </Card>
@@ -73,7 +60,7 @@ export default function PlanEvent() {
             <TabsContent value="manual">
               <Card>
                 <CardContent className="pt-6">
-                  <DietaryRestrictionSelector onSubmit={handleManualSelection} />
+                  
                 </CardContent>
               </Card>
             </TabsContent>
@@ -91,7 +78,6 @@ export default function PlanEvent() {
           <Card className="w-full max-w-3xl mx-auto">
             <CardContent className="pt-6">
               <MealSchedule mealCount={mealCount} dietaryData={dietaryData} />
-              <Button onClick={handleConfirm} className="mt-4">Confirm and Start Game</Button>
             </CardContent>
           </Card>
         )}

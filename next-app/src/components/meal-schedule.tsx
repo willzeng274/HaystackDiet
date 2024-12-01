@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ShuffleLoader } from "./shuffle-loader";
+import { useRouter } from "next/navigation";
+import { Food, Restriction, useFoodStore } from "@/app/game/store";
+import { useToast } from "@/hooks/use-toast";
 
 const dietaryRestrictions = {
   GLUTEN: "Gluten-Free",
@@ -55,7 +59,7 @@ const generateMealSchedule = async (dayCount: number, dietaryData: any) => {
 
 export function MealSchedule({
   mealCount,
-  dietaryData,
+  dietaryData
 }: {
   mealCount: number;
   dietaryData: any;
@@ -64,9 +68,94 @@ export function MealSchedule({
 
   // const [schedules, setSchedules] = useState(() => Array.from({ length: 1 }).map(() => generateMealSchedule(mealCount, dietaryData)));
   // Assign schedules to a usestate json
-  const [schedules, setSchedules] = useState(null);
+  const [schedules, setSchedules] = useState<any>(null);
+  const router = useRouter()
+  const { toast } = useToast()
+  // const foods = useFoodStore(state => state.foods)
+  const setFoods = useFoodStore(state => state.setFoods)
+  const regenCurrFoods = useFoodStore(state => state.regenCurrFoods)
+
+  const handleConfirm = () => {
+    if (!schedules) {
+      toast({
+        title: "Error",
+        description: "No schedules found",
+        variant: "destructive",
+      })
+      return;
+    }
+    const meal_plans = schedules["meal_plans"];
+    console.log("Dietary Data", schedules, meal_plans);
+    if (!meal_plans) {
+      toast({
+        title: "Error",
+        description: "No meal plans found",
+        variant: "destructive"
+      });
+      return;
+    }
+    // meal_plans is an array of n objects
+    // object: day: number, meals: {breakfast: [], lunch: [], dinner: []}
+    // each breakfast, lunch, dinner arrays contain objects with { dietary_restriction, item, restaurant, price, people_count, is_special_request }
+    // map the meal_plans into foods
+
+    const newFoods: {
+      [key in Restriction]: Food[]
+    } = {
+      "NORMAL": [],
+      "VEGETARIAN": [],
+      "VEGAN": [],
+      "GLUTEN": [],
+      "LACTOSE": [],
+      "HALAL": [],
+      "NUT": [],
+    }
+
+    function convert(s: string): Restriction {
+      console.log(s);
+      if (s === "NONE") {
+        return "NORMAL";
+      } else if (s === "NO RESTRICTIONS") {
+        return "NORMAL";
+      }
+      return s as Restriction;
+    }
+
+    meal_plans.forEach((plan: any) => {
+      plan.meals.breakfast.forEach((meal: any) => {
+        newFoods[convert(meal.dietary_restriction)]?.push({
+          name: meal.item,
+          restriction: meal.dietary_restriction,
+        });
+      })
+      plan.meals.lunch.forEach((meal: any) => {
+        newFoods[convert(meal.dietary_restriction)]?.push({
+          name: meal.item,
+          restriction: meal.dietary_restriction,
+        });
+      })
+      plan.meals.dinner.forEach((meal: any) => {
+        newFoods[convert(meal.dietary_restriction)]?.push({
+          name: meal.item,
+          restriction: meal.dietary_restriction,
+        });
+      })
+    });
+    console.log(newFoods);
+    setFoods(newFoods);
+    regenCurrFoods();
+    router.push('/game');
+  }
+
+  // use ref so the useEffect can be called only once
+
+  const fetchRef = useRef(false);
 
   useEffect(() => {
+    if (fetchRef.current) {
+      return;
+    }
+    fetchRef.current = true;
     const fetchData = async () => {
       const result = await generateMealSchedule(mealCount, dietaryData);
 
@@ -79,7 +168,7 @@ export function MealSchedule({
       element.download = "meal_schedule.json";
       document.body.appendChild(element); // Required for this to work in FireFox
       element.click();
-      
+
 
       setSchedules(result);
       console.log(result);
@@ -123,7 +212,13 @@ export function MealSchedule({
 
   */
   if (!schedules) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <h1 className="text-center text-4xl text-bold mb-10 animate-pulse">Loading...</h1>
+        <ShuffleLoader />
+        <iframe className="aspect-video w-full mt-20" src="https://www.youtube.com/embed/eRXE8Aebp7s" title="10 hour loop playing Subway Surfers" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+    );
   } else {
     return (
       <div className="space-y-6">
@@ -138,7 +233,6 @@ export function MealSchedule({
               </CardHeader>
 
               <CardContent>
-                {/* Iterate through the breakfast meals */}
                 <h3 className="text-xl font-semibold">Breakfast</h3>
                 {schedule.meals.breakfast.map((meal, mealIndex) => (
                   <div key={mealIndex} className="meal-item">
@@ -146,7 +240,6 @@ export function MealSchedule({
                   </div>
                 ))}
 
-                {/* Iterate through the lunch meals */}
                 <h3 className="text-xl font-semibold">Lunch</h3>
                 {schedule.meals.lunch.map((meal, mealIndex) => (
                   <div key={mealIndex} className="meal-item">
@@ -154,7 +247,6 @@ export function MealSchedule({
                   </div>
                 ))}
 
-                {/* Iterate through the dinner meals */}
                 <h3 className="text-xl font-semibold">Dinner</h3>
                 {schedule.meals.dinner.map((meal, mealIndex) => (
                   <div key={mealIndex} className="meal-item">
@@ -165,6 +257,7 @@ export function MealSchedule({
             </Card>
           ))}
         </ScrollArea>
+        <Button onClick={handleConfirm} className="mt-4 ml-auto mr-auto flex">Confirm and Start Game</Button>
       </div>
     );
   }

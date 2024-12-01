@@ -7,70 +7,65 @@
     "website": "https://locations.manchuwok.com/stores/university-of-western-ontario/?utm_source=G&utm_medium=LPM&utm_campaign=MTY",
     "menu_items": [
       {
-        "name": "Spring Rolls",
-        "description": "Crispy rolls filled with cabbage, carrots, and glass noodles. Served with a sweet chili dipping sauce.",
-        "price": 10.0,
+        "name": "Vegetable Spring Rolls",
+        "description": "Crispy rolls filled with cabbage, carrots, and glass noodles, served with sweet chili sauce.",
+        "price": 8.0,
         "category": "Appetizers",
-        "restrictions": [
-          "VEGAN",
-          "LACTOSE",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Chicken Satay Skewers",
-        "description": "Grilled chicken skewers marinated in a blend of spices, served with a peanut sauce.",
-        "price": 12.0,
-        "category": "Appetizers",
-        "restrictions": [
-          "HALAL",
-          "NUT"
-        ]
-      },
-      {
-        "name": "Vegetable Fried Rice",
-        "description": "Stir-fried rice with mixed vegetables, soy sauce, and sesame oil.",
-        "price": 15.0,
-        "category": "Mains",
-        "restrictions": [
-          "VEGETARIAN"
-        ]
-      },
-      {
-        "name": "Beef and Broccoli",
-        "description": "Tender beef slices stir-fried with broccoli in a savory oyster sauce.",
-        "price": 18.0,
-        "category": "Mains",
-        "restrictions": [
-          "HALAL"
-        ]
-      },
-      {
-        "name": "Tofu and Vegetable Stir-fry",
-        "description": "Tofu cubes stir-fried with bell peppers, broccoli, and carrots in a garlic soy sauce.",
-        "price": 17.0,
-        "category": "Mains",
         "restrictions": [
           "VEGAN"
         ]
       },
       {
-        "name": "Sweet and Sour Chicken",
-        "description": "Crispy chicken pieces tossed in a tangy sweet and sour sauce with pineapple and bell peppers.",
-        "price": 20.0,
+        "name": "Chicken Dumplings",
+        "description": "Steamed dumplings filled with minced chicken and scallions, served with soy sauce.",
+        "price": 10.0,
+        "category": "Appetizers",
+        "restrictions": [
+          "VEGAN",
+          "LACTOSE",
+          "GLUTEN",
+          "HALAL",
+          "VEGETARIAN",
+          "KOSHER"
+        ]
+      },
+      {
+        "name": "Tofu Stir Fry",
+        "description": "Stir-fried tofu with bell peppers, broccoli, and soy sauce, served with jasmine rice.",
+        "price": 15.0,
         "category": "Mains",
         "restrictions": [
-          "HALAL",
-          "GLUTEN",
           "VEGAN",
-          "KOSHER",
+          "GLUTEN"
+        ]
+      },
+      {
+        "name": "Beef and Broccoli",
+        "description": "Tender beef slices stir-fried with broccoli in a savory oyster sauce, served with steamed rice.",
+        "price": 18.0,
+        "category": "Mains",
+        "restrictions": [
+          "NONE",
+          "HALAL"
+        ]
+      },
+      {
+        "name": "Sweet and Sour Chicken",
+        "description": "Crispy chicken pieces tossed in a tangy sweet and sour sauce, served with fried rice.",
+        "price": 17.0,
+        "category": "Mains",
+        "restrictions": [
+          "VEGAN",
           "LACTOSE",
-          "VEGETARIAN"
+          "GLUTEN",
+          "HALAL",
+          "VEGETARIAN",
+          "KOSHER"
         ]
       },
       {
         "name": "Mango Sticky Rice",
-        "description": "Sweet sticky rice served with ripe mango slices and a coconut milk drizzle.",
+        "description": "Sweet sticky rice topped with fresh mango slices and coconut milk.",
         "price": 8.0,
         "category": "Desserts",
         "restrictions": [
@@ -79,36 +74,45 @@
         ]
       },
       {
-        "name": "Coconut Milk Bubble Tea",
-        "description": "Iced tea with coconut milk and tapioca pearls.",
-        "price": 6.0,
-        "category": "Drinks",
-        "restrictions": [
-          "VEGAN",
-          "LACTOSE",
-          "GLUTEN"
-        ]
-      },
-      {
         "name": "Almond Cookies",
-        "description": "Crispy cookies made with almond flour and sliced almonds.",
-        "price": 7.0,
+        "description": "Traditional Chinese almond cookies made with almond flour and butter.",
+        "price": 6.0,
         "category": "Desserts",
         "restrictions": [
           "NUT",
+          "VEGETARIAN"
+        ]
+      },
+      {
+        "name": "Green Tea",
+        "description": "Refreshing hot green tea brewed from premium leaves.",
+        "price": 4.0,
+        "category": "Drinks",
+        "restrictions": [
+          "LACTOSE",
+          "VEGAN",
           "GLUTEN"
         ]
       },
       {
-        "name": "Jasmine Green Tea",
-        "description": "Fragrant jasmine-infused green tea served hot or iced.",
-        "price": 4.0,
+        "name": "Lychee Soda",
+        "description": "Sparkling soda with a hint of lychee flavor, served over ice.",
+        "price": 5.0,
         "category": "Drinks",
         "restrictions": [
-          "VEGAN",
           "LACTOSE",
-          "KOSHER",
+          "VEGAN",
           "GLUTEN"
+        ]
+      },
+      {
+        "name": "Vegetarian Fried Rice",
+        "description": "Fried rice with mixed vegetables, eggs, and soy sauce.",
+        "price": 12.0,
+        "category": "Mains",
+        "restrictions": [
+          "GLUTEN",
+          "VEGETARIAN"
         ]
       }
     ]
@@ -124,32 +128,32 @@
         "name": "Noodle Bar Wednesday",
         "description": "A selection of noodles and toppings available every Wednesday.",
         "price": 0.0,
-        "category": "Specialty Days",
+        "category": "Weekly Special",
         "restrictions": [
           "NONE"
         ]
       },
       {
         "name": "Build-A-Bowl Thursday",
-        "description": "Customizable bowls with various ingredients available every Thursday.",
+        "description": "Create your own bowl with a variety of ingredients every Thursday.",
         "price": 0.0,
-        "category": "Specialty Days",
+        "category": "Weekly Special",
         "restrictions": [
           "NONE"
         ]
       },
       {
         "name": "Fish & Chip Friday",
-        "description": "Traditional fish and chips available every Friday.",
+        "description": "Traditional fish and chips served every Friday.",
         "price": 0.0,
-        "category": "Specialty Days",
+        "category": "Weekly Special",
         "restrictions": [
           "NONE"
         ]
       },
       {
         "name": "Buffet",
-        "description": "Buffet with daily beverage and dessert features.",
+        "description": "Buffet featuring local and seasonal cuisine, includes daily beverage and dessert features.",
         "price": 23.0,
         "category": "Buffet",
         "restrictions": [
