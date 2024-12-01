@@ -79,7 +79,7 @@ class RestaurantMenuFinder:
             logger.error(f"Error fetching place details: {e}")
             return {}
 
-    def get_nearby_restaurants(self, latitude: float, longitude: float, radius: int = 10) -> List[Restaurant]:
+    def get_nearby_restaurants(self, latitude: float, longitude: float, radius: int = 1) -> List[Restaurant]:
         base_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
         params = {
             'location': f"{latitude},{longitude}",
@@ -493,7 +493,7 @@ class RestaurantMenuFinder:
         
         return restaurant
 
-    def find_restaurant_menus(self, latitude: float, longitude: float, radius: int = 100) -> List[Restaurant]:
+    def find_restaurant_menus(self, latitude: float, longitude: float, radius: int = 150) -> List[Restaurant]:
         try:
             restaurants = self.get_nearby_restaurants(latitude, longitude, radius)
             logger.info(f"Found {len(restaurants)} restaurants")

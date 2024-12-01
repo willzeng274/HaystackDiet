@@ -57,6 +57,7 @@ def find_diet_columns(cols: pd.Index):
     "single_dietary_field" should be the name of the column that records dietary restrictions or food allergies if "is_single_dietary_field" is true. If "is_single_dietary_field" is false, "single_dietary_field" should be null.
     The "dietary_fields" object should contain the following fields: "gluten", "lactose", "vegan", "vegetarian", "halal", "kosher", and "nut". Each field should contain the name of the column that records the corresponding dietary restriction or food allergy. If a column does not record a particular dietary restriction or food allergy, the field should be null.
     {{passage}}.
+
     Only use information that is present in the passage. Follow this JSON schema, but only return the actual instances without any additional schema definition:
     {{schema}}
     Make sure your response is a dict and not a list.

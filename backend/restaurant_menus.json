@@ -1,5 +1,119 @@
 [
   {
+    "name": "Manchu Wok",
+    "address": "University Community Centre, 1151 Richmond Street, London",
+    "rating": 1.6,
+    "price_level": 1,
+    "website": "https://locations.manchuwok.com/stores/university-of-western-ontario/?utm_source=G&utm_medium=LPM&utm_campaign=MTY",
+    "menu_items": [
+      {
+        "name": "Spring Rolls",
+        "description": "Crispy rolls filled with cabbage, carrots, and glass noodles. Served with a sweet chili dipping sauce.",
+        "price": 10.0,
+        "category": "Appetizers",
+        "restrictions": [
+          "VEGAN",
+          "LACTOSE",
+          "GLUTEN"
+        ]
+      },
+      {
+        "name": "Chicken Satay Skewers",
+        "description": "Grilled chicken skewers marinated in a blend of spices, served with a peanut sauce.",
+        "price": 12.0,
+        "category": "Appetizers",
+        "restrictions": [
+          "HALAL",
+          "NUT"
+        ]
+      },
+      {
+        "name": "Vegetable Fried Rice",
+        "description": "Stir-fried rice with mixed vegetables, soy sauce, and sesame oil.",
+        "price": 15.0,
+        "category": "Mains",
+        "restrictions": [
+          "VEGETARIAN"
+        ]
+      },
+      {
+        "name": "Beef and Broccoli",
+        "description": "Tender beef slices stir-fried with broccoli in a savory oyster sauce.",
+        "price": 18.0,
+        "category": "Mains",
+        "restrictions": [
+          "HALAL"
+        ]
+      },
+      {
+        "name": "Tofu and Vegetable Stir-fry",
+        "description": "Tofu cubes stir-fried with bell peppers, broccoli, and carrots in a garlic soy sauce.",
+        "price": 17.0,
+        "category": "Mains",
+        "restrictions": [
+          "VEGAN"
+        ]
+      },
+      {
+        "name": "Sweet and Sour Chicken",
+        "description": "Crispy chicken pieces tossed in a tangy sweet and sour sauce with pineapple and bell peppers.",
+        "price": 20.0,
+        "category": "Mains",
+        "restrictions": [
+          "HALAL",
+          "GLUTEN",
+          "VEGAN",
+          "KOSHER",
+          "LACTOSE",
+          "VEGETARIAN"
+        ]
+      },
+      {
+        "name": "Mango Sticky Rice",
+        "description": "Sweet sticky rice served with ripe mango slices and a coconut milk drizzle.",
+        "price": 8.0,
+        "category": "Desserts",
+        "restrictions": [
+          "VEGAN",
+          "GLUTEN"
+        ]
+      },
+      {
+        "name": "Coconut Milk Bubble Tea",
+        "description": "Iced tea with coconut milk and tapioca pearls.",
+        "price": 6.0,
+        "category": "Drinks",
+        "restrictions": [
+          "VEGAN",
+          "LACTOSE",
+          "GLUTEN"
+        ]
+      },
+      {
+        "name": "Almond Cookies",
+        "description": "Crispy cookies made with almond flour and sliced almonds.",
+        "price": 7.0,
+        "category": "Desserts",
+        "restrictions": [
+          "NUT",
+          "GLUTEN"
+        ]
+      },
+      {
+        "name": "Jasmine Green Tea",
+        "description": "Fragrant jasmine-infused green tea served hot or iced.",
+        "price": 4.0,
+        "category": "Drinks",
+        "restrictions": [
+          "VEGAN",
+          "LACTOSE",
+          "KOSHER",
+          "GLUTEN"
+        ]
+      }
+    ]
+  },
+  {
     "name": "Green Leaf Cafe @ Somerville",
     "address": "3335 Somerville House, London",
     "rating": 4.6,
@@ -8,27 +122,27 @@
     "menu_items": [
       {
         "name": "Noodle Bar Wednesday",
-        "description": "A selection of noodles with various toppings and sauces.",
+        "description": "A selection of noodles and toppings available every Wednesday.",
         "price": 0.0,
-        "category": "Noodle Bar",
+        "category": "Specialty Days",
         "restrictions": [
           "NONE"
         ]
       },
       {
         "name": "Build-A-Bowl Thursday",
-        "description": "Create your own bowl with a variety of fresh ingredients.",
+        "description": "Customizable bowls with various ingredients available every Thursday.",
         "price": 0.0,
-        "category": "Build-A-Bowl",
+        "category": "Specialty Days",
         "restrictions": [
           "NONE"
         ]
       },
       {
         "name": "Fish & Chip Friday",
-        "description": "Classic fish and chips with a crispy batter.",
+        "description": "Traditional fish and chips available every Friday.",
         "price": 0.0,
-        "category": "Fish & Chips",
+        "category": "Specialty Days",
         "restrictions": [
           "NONE"
         ]
@@ -49,117 +163,6 @@
         "category": "Buffet",
         "restrictions": [
           "NONE"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Manchu Wok",
-    "address": "University Community Centre, 1151 Richmond Street, London",
-    "rating": 1.6,
-    "price_level": 1,
-    "website": "https://locations.manchuwok.com/stores/university-of-western-ontario/?utm_source=G&utm_medium=LPM&utm_campaign=MTY",
-    "menu_items": [
-      {
-        "name": "Vegetable Spring Rolls",
-        "description": "Crispy spring rolls filled with cabbage, carrots, and mushrooms. Served with a sweet chili dipping sauce.",
-        "price": 9.0,
-        "category": "Appetizers",
-        "restrictions": [
-          "VEGAN",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Chicken Fried Rice",
-        "description": "Stir-fried rice with chicken, peas, carrots, and eggs, seasoned with soy sauce.",
-        "price": 18.0,
-        "category": "Mains",
-        "restrictions": [
-          "NONE"
-        ]
-      },
-      {
-        "name": "Tofu and Broccoli Stir Fry",
-        "description": "Tofu cubes and broccoli florets stir-fried in a savory garlic sauce. Served with steamed jasmine rice.",
-        "price": 16.0,
-        "category": "Mains",
-        "restrictions": [
-          "VEGAN",
-          "VEGETARIAN",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Beef and Broccoli",
-        "description": "Tender beef slices stir-fried with broccoli in a savory oyster sauce. Served with steamed rice.",
-        "price": 20.0,
-        "category": "Mains",
-        "restrictions": [
-          "HALAL"
-        ]
-      },
-      {
-        "name": "Sweet and Sour Chicken",
-        "description": "Crispy battered chicken pieces tossed in a sweet and tangy sauce with bell peppers and pineapple.",
-        "price": 22.0,
-        "category": "Mains",
-        "restrictions": [
-          "NONE"
-        ]
-      },
-      {
-        "name": "Almond Cookies",
-        "description": "Traditional Chinese almond cookies made with almond flour and butter.",
-        "price": 7.0,
-        "category": "Desserts",
-        "restrictions": [
-          "NUT",
-          "VEGETARIAN"
-        ]
-      },
-      {
-        "name": "Mango Pudding",
-        "description": "Creamy mango-flavored pudding made with coconut milk, topped with fresh mango slices.",
-        "price": 8.0,
-        "category": "Desserts",
-        "restrictions": [
-          "VEGAN",
-          "LACTOSE",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Jasmine Green Tea",
-        "description": "Refreshing green tea infused with jasmine flowers, served hot or iced.",
-        "price": 5.0,
-        "category": "Drinks",
-        "restrictions": [
-          "LACTOSE",
-          "KOSHER",
-          "HALAL",
-          "VEGAN",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Egg Drop Soup",
-        "description": "Classic Chinese soup made with beaten eggs, chicken broth, and a hint of sesame oil.",
-        "price": 10.0,
-        "category": "Appetizers",
-        "restrictions": [
-          "KOSHER",
-          "GLUTEN"
-        ]
-      },
-      {
-        "name": "Kung Pao Chicken",
-        "description": "Spicy stir-fried chicken with peanuts, bell peppers, and chili peppers in a savory sauce.",
-        "price": 24.0,
-        "category": "Mains",
-        "restrictions": [
-          "HALAL",
-          "NUT"
         ]
       }
     ]

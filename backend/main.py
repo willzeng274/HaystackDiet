@@ -1,3 +1,4 @@
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -83,10 +84,14 @@ app.add_middleware(
 
 
 class Restrictions(BaseModel):
-    restrictions: dict | None
-    days: int | None
-    long: float | None
-    lat: float | None
+    GLUTEN: int
+    LACTOSE: int
+    VEGAN: int
+    VEGETARIAN: int
+    HALAL: int
+    KOSHER: int
+    NUT: int
+    NORMAL: int
 
 class GenerateMealResponse(BaseModel):
     restrictions: Restrictions
@@ -128,23 +133,72 @@ async def generate_meal_schedule(response: GenerateMealResponse):
                 "menu_items": menu_items
             })
 
-        prompt = f"""Create a {response.days}-day meal plan with 3 meals per day.
-People count per restriction:
-- GLUTEN: {response.restrictions.GLUTEN}
-- LACTOSE: {response.restrictions.LACTOSE}
-- VEGAN: {response.restrictions.VEGAN}
-- VEGETARIAN: {response.restrictions.VEGETARIAN}
-- HALAL: {response.restrictions.HALAL}
-- NUT: {response.restrictions.NUT}
-- NO RESTRICTIONS: {response.restrictions.NORMAL}
+        pplCountsForPrompt= ""; 
+        pplGroups = 0;
+        for key in response.restrictions.dict(): 
+            if response.restrictions.dict()[key] > 0: 
+                pplCountsForPrompt += f"- {key}: {response.restrictions.dict()[key]}\n"
+                pplGroups += 1
+
+
+
+        prompt = f"""Create a {response.days}-day meal plan with enough meals for breakfast, lunch and dinner for each day
+{pplGroups} GROUPS OF PEOPLE TO ACCOMODATE:
+{pplCountsForPrompt}
 
 Rules:
-1. Use existing menu items or create reasonable alternatives
+1. Use existing menu items as much as possible but create reasonable alternatives if necessary (i.e. people with nut allergies cannot have an almond cookie)
 2. Mark created items with "(Special Request)"
-3. Ensure each person gets breakfast, lunch, and dinner
-4. Price ranges: Breakfast $8-15, Lunch $12-25, Dinner $15-35
+3. ENSURE EACH person group gets breakfast, satisfying {pplGroups} of people with the restriction listed in PEOPLE TO ACCOMODATE
+4. ENSURE EACH person group gets lunch, satisfying {pplGroups} of people with the restriction listed in PEOPLE TO ACCOMODATE
+5. ENSURE EACH person group gets dinner, satisfying {pplGroups} of people with the restriction listed in PEOPLE TO ACCOMODATE
+6. Price ranges: Breakfast $8-15, Lunch $12-25, Dinner $15-35, no price can be 0$
+7. For the person count simply use the number of people with the restriction listed in PEOPLE TO ACCOMODATE
+8. Each group of meals should have one unique retaurant, i.e breakfast is from restaurant A, lunch is from restaurant B, dinner is from restaurant C
 
-Available Restaurants:
+Here is an example for 4 people groups with the following restrictions:
+- GLUTEN: 2
+- LACTOSE: 2
+- NUT: 3
+- NORMAL: 6
+
+This means that there should be FOUR options for each meal of the day (breakfast, lunch, dinner) that satisfy the above restrictions.
+
+Here is a sample result for the breakfast, lunch and dinner for each day:
+
+Example result json for the breakfast: 
+
+"dietary_restriction": "GLUTEN",
+"restaurant": "Manchu Wok",
+"item": "Jasmine Green Tea",
+"price": 5,
+"people_count": 2,
+"is_special_request": false
+
+"dietary_restriction": "LACTOSE",
+"restaurant": "Manchu Wok",
+"item": "Lactose Free Lychee Lemonade",
+"price": 6,
+"people_count": 2,
+"is_special_request": true
+
+"dietary_restriction": "NUT",
+"restaurant": "Manchu Wok",
+"item": "Lychee Lemonade",
+"price": 6,
+"people_count": 3,
+"is_special_request": false
+
+"dietary_restriction": "NORMAL",
+"restaurant": "Manchu Wok",
+"item": "Regular Lychee Lemonade",
+"price": 6,
+"people_count": 6,
+"is_special_request": false
+
+Lunch and Dinner json follow suit. Notice how the breakfast, lunch and dinner should always include one of each type of restriction listed in PEOPLE TO ACCOMODATE
+
+Available Restaurants For Actual Menu Items:
 {json.dumps(simplified_menu, indent=2)}
 
 Return JSON format:
@@ -169,6 +223,7 @@ Return JSON format:
         }}
     ]
 }}"""
+        print("PROMPT", prompt)
 
         completion = await client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
@@ -178,7 +233,7 @@ Return JSON format:
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            timeout=30.0  # Set timeout to 30 seconds
+            timeout=70.0  # Set timeout to 30 seconds
         )
         
         meal_plan = json.loads(completion.choices[0].message.content)
@@ -227,7 +282,10 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         # Read the CSV file
         contents = await csv_file.read()
         csv_data = contents.decode("utf-8")
+        
+        
         df = pd.read_csv(io.StringIO(csv_data))
+        df2 = pd.read_csv(io.StringIO(csv_data), header=None)
 
         # Count how many instances of each restriction type in the column with the food
         # items' restrictions
@@ -256,18 +314,39 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         #     "kosher": "KOSHER",
         #     "nut": null
         # }
+        array2 = df2.values
 
-        # {
-        # gluten: 10
-        # personCount: 100 
-        # nut: 12
-        # }
         personCount = 0; 
-        if llm_response["is_single_dietary_field"]:  
-            for row in array: 
+        if llm_response["is_single_dietary_field"] or True:  
+
+            # find column that has the "single_dietary_field" 
+            foundColumn = 0
+            for row in array2: 
+                count = 0; 
                 for entry in row: 
-                    if (entry.strip().upper() in restriction_words): 
-                        restriction_count[entry.strip()] += 1
+                    if (llm_response["single_dietary_field"] in str(entry)):
+                        foundColumn = count
+                        break
+                    count+=1; 
+            print("FOUND COLUMN: ", foundColumn)
+
+            for row in array: 
+                print("ROW: ", str(row))
+                colCount = 0;
+                for entry in row:
+                    # Check that the name of the column matches the llm
+                    print("ROW ENTRY ", entry, "COLCOUNT", colCount)
+
+                    if (colCount != foundColumn or entry == "nan"):
+                        colCount += 1
+                        continue
+                    else:
+                        colCount += 1
+                    
+                
+                    print("CURRENTLY AT ENTRY:", entry)
+                    if (str(entry).strip().upper() in restriction_words): 
+                        restriction_count[str(entry).strip()] += 1
                     else: 
                         personCount += 1 
         else: 
