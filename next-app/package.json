@@ -19,6 +19,7 @@
     "@react-three/drei": "^9.118.0",
     "@react-three/fiber": "^9.0.0-alpha.8",
     "@react-three/rapier": "^1.5.0",
+    "@tabler/icons-react": "^3.23.0",
     "chart.js": "^4.4.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
