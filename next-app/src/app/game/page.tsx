@@ -1,30 +1,135 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Sky } from '@react-three/drei'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { PointerLockControls, Sky } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useRef } from 'react'
 import { Ground } from './ground';
-import { Warehouse } from './warehouse';
+import { Table } from './table';
+import * as THREE from 'three';
+import { Dave } from './horses/dave';
+
+const Crosshair = () => (
+  <div
+    style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 999,
+    }}
+  >
+    <div
+      style={{
+        width: '2px',
+        height: '20px',
+        background: 'white',
+      }}
+    />
+    <div
+      style={{
+        width: '20px',
+        height: '2px',
+        background: 'white',
+        position: 'absolute',
+      }}
+    />
+  </div>
+);
+
+
+const CameraController = ({ bounds, speed = 0.2 }: { bounds: { x: [number, number], z: [number, number] }, speed?: number }) => {
+  const movement = useRef({
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
+  });
+
+  const cameraRef = useThree((state) => state.camera);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'KeyW') movement.current.forward = true;
+      if (event.code === 'KeyS') movement.current.backward = true;
+      if (event.code === 'KeyA') movement.current.left = true;
+      if (event.code === 'KeyD') movement.current.right = true;
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.code === 'KeyW') movement.current.forward = false;
+      if (event.code === 'KeyS') movement.current.backward = false;
+      if (event.code === 'KeyA') movement.current.left = false;
+      if (event.code === 'KeyD') movement.current.right = false;
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, []);
+
+  useFrame(() => {
+    if (!cameraRef) return;
+
+    const camera = cameraRef;
+
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    forward.y = 0;
+    forward.normalize();
+
+    const right = new THREE.Vector3().crossVectors(camera.up, forward).normalize();
+
+    if (movement.current.forward) {
+      camera.position.add(forward.clone().multiplyScalar(speed));
+    }
+    if (movement.current.backward) {
+      camera.position.add(forward.clone().multiplyScalar(-speed));
+    }
+    if (movement.current.left) {
+      camera.position.add(right.clone().multiplyScalar(speed));
+    }
+    if (movement.current.right) {
+      camera.position.add(right.clone().multiplyScalar(-speed));
+    }
+
+    camera.position.x = Math.max(bounds.x[0], Math.min(bounds.x[1], camera.position.x));
+    camera.position.z = Math.max(bounds.z[0], Math.min(bounds.z[1], camera.position.z));
+  });
+
+  return null;
+};
 
 export default function Game() {
   return (
     <div className="w-screen h-screen">
+      <Crosshair />
       <Canvas
+        camera={{ fov: 90, position: [0, 2.5, 0] }}
         shadows
       >
         <Suspense fallback={null}>
+          <CameraController
+            bounds={{ x: [-1, 1], z: [-4, 4] }}
+          />
+          <PointerLockControls pointerSpeed={3} />
           <Perf position="top-left" />
           <Sky sunPosition={[100, 20, 100]} />
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 10]} />
-          <OrbitControls />
-          {/* <Ground /> */}
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="hotpink" />
-          </mesh>
-          <Warehouse />
+          {/* <OrbitControls /> */}
+          <Ground />
+          <Table position={[2, 1, -1.8]} />
+          <Table position={[2, 1, 1.8]} />
+          <Dave position={[-5, 0, 0]} scale={0.5} rotation={[0, 0, 0]} />
         </Suspense>
       </Canvas>
     </div>

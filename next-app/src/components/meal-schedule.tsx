@@ -19,6 +19,28 @@ const generateMealSchedule = (mealCount: number, dietaryData: any) => {
 
   console.log("GENERATE MEAL SCHEDULE"); 
 
+  // Fetch the meals from the API 
+  const meals = Array();
+  fetch('http://localhost:3000/generate-meal', 
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        mealCount: mealCount,
+        dietaryData: dietaryData
+      })
+    }
+  )
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      meals.push(data);
+    });
+  
+  
+
   // This is a placeholder function. In a real application, you'd have a more sophisticated
   // algorithm to generate meal schedules based on dietary restrictions and preferences.
   return Array(mealCount).fill(null).map((_, index) => ({

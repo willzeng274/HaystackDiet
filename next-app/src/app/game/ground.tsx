@@ -1,15 +1,18 @@
-'use client';
+import React from 'react';
+import { useLoader } from '@react-three/fiber';
+import { TextureLoader } from 'three';
+import * as THREE from 'three';
 
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
+export const Ground = () => {
+  const texture = useLoader(TextureLoader, '/grass.jpg');
 
-export function Ground() {
-    const texture = useLoader(TextureLoader, "grass.jpg");
-    texture.repeat.set(240, 240);
-    return (
-        <mesh position={[0, 0, 0]} rotation-x={-Math.PI / 2}>
-            <planeGeometry args={[1000, 1000]} />
-            <meshStandardMaterial map={texture} map-repeat={[240, 240]} color="green" />
-        </mesh>
-    )
-}
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(500, 500);
+
+  return (
+    <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]}>
+      <planeGeometry args={[2000, 2000]} />
+      <meshBasicMaterial map={texture} />
+    </mesh>
+  );
+};

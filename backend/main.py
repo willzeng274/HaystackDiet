@@ -66,6 +66,11 @@ app.add_middleware(
 #     SERVED = "SERVED"
 #     FAILED = "FAILED"
 
+@app.post("/generate-meal")
+async def generate_meal_schedule(restrictions: str): 
+    # Now generate a meal based on the restrictions and meal count 
+    
+
 # CSV Handling Section 
 @app.post("/generate-meals-csv")
 async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form(...)):
@@ -106,7 +111,7 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         if llm_response["is_single_dietary_field"]:  
             for row in array: 
                 for entry in row: 
-                    if (entry.strip() in restriction_words): 
+                    if (entry.strip().upper() in restriction_words): 
                         restriction_count[entry.strip()] += 1
         else: 
             print("Several fields, we will not handle this in the demo ;)") # we arent doing this yet! 
