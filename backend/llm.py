@@ -95,6 +95,7 @@ def find_diet_columns(cols: pd.Index):
 
     return valid_json
 
+
 if __name__ == "__main__":
     ...
     

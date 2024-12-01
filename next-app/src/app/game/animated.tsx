@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // import { MathUtils } from 'three';
 
 const Animated = ({ Component }: { Component: React.ComponentType<any> }) => {
-    const FRAME_DURATION = 15000; // Change this value to adjust frame duration (in milliseconds)
+    const FRAME_DURATION = 3000; // Change this value to adjust frame duration (in milliseconds)
     const [action, setAction] = useState("Walk");
     const [position, setPosition] = useState([-18, 0, -6]);
     const [rotation, setRotation] = useState([0, 0, 0]);
@@ -14,7 +14,7 @@ const Animated = ({ Component }: { Component: React.ComponentType<any> }) => {
     const frames = [
         { position: [-18, 0, -6], rotation: [0, 0, 0], action: "Walk", duration: 3000 },
         { position: [-18, 0, 0], rotation: [0, Math.PI / 2, 0], action: "Walk", duration: 3000 },
-        { position: [-4, 0, 0], rotation: [0, Math.PI / 2, 0], action: "Idle", duration: 5000 },
+        { position: [-4, 0, 0], rotation: [0, Math.PI / 2, 0], action: "Idle", duration: Infinity },
     ];
     
     useFrame((state) => {
@@ -38,6 +38,16 @@ const Animated = ({ Component }: { Component: React.ComponentType<any> }) => {
                 daveRef.current.position.set(newPos[0], newPos[1], newPos[2]);
                 daveRef.current.rotation.set(newRot[0], newRot[1], newRot[2]);
                 
+                if (frameIndex !== currentFrameRef.current) {
+                    currentFrameRef.current = frameIndex;
+                    console.log("Setting action to", currentFrame.action);
+                    setAction(currentFrame.action);
+                }
+            }
+        } else if (frameIndex === frames.length - 1) {
+            // const alpha = (elapsed % FRAME_DURATION) / FRAME_DURATION;
+            const currentFrame = frames[frameIndex];
+            if (daveRef.current) {
                 if (frameIndex !== currentFrameRef.current) {
                     currentFrameRef.current = frameIndex;
                     console.log("Setting action to", currentFrame.action);

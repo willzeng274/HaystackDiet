@@ -8,7 +8,6 @@ import { Utensils, GamepadIcon } from 'lucide-react'
 import { Vortex } from '@/components/ui/vortex'
 
 export default function Home() {
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -30,25 +29,25 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Vortex
-        className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
+        className="flex items-center flex-col justify-center px-4 md:px-10 py-8 w-full max-w-7xl mx-auto"
       >
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="text-center"
+          className="text-center w-full"
         >
           <motion.h1 
             variants={itemVariants}
-            className="text-6xl font-bold text-white mb-8 tracking-tight"
+            className="text-5xl md:text-6xl font-bold text-white mb-12 tracking-tight"
           >
-            Dietary Adventure
+            Yo Chat, Is This Vegan?
           </motion.h1>
           <motion.div 
             variants={itemVariants}
-            className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8"
+            className="flex flex-col sm:flex-row justify-center items-center space-y-6 sm:space-y-0 sm:space-x-8"
           >
-            <Card className="w-64 h-64 bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+            <Card className="w-full sm:w-72 h-72 bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
               <CardContent className="flex flex-col items-center justify-center h-full">
                 <motion.div
                   whileHover={{ rotate: 360 }}
@@ -63,7 +62,7 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-            <Card className="w-64 h-64 bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+            <Card className="w-full sm:w-72 h-72 bg-white/10 backdrop-blur-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
               <CardContent className="flex flex-col items-center justify-center h-full">
                 <motion.div
                   whileHover={{ rotate: 360 }}
@@ -84,4 +83,3 @@ export default function Home() {
     </div>
   )
 }
-

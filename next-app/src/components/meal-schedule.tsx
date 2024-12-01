@@ -19,15 +19,23 @@ const generateMealSchedule = (dayCount: number, dietaryData: any) => {
 
   console.log("GENERATE MEAL SCHEDULE"); 
 
-  // Fetch the meals from the API 
+
+  
   const meals = Array();
-  const formData = new FormData();
-  formData.append('days', dayCount);
-  formData.append('dietaryData', JSON.stringify(dietaryData));
+  const payload = {
+    restrictions: dietaryData,
+    days: dayCount,
+    long: -81.274239, // Replace with actual longitude
+    lat: 43.007451   // Replace with actual latitude
+  }
   fetch('http://localhost:8000/generate-meal', 
     {
       method: 'POST',
-      body: formData
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }, 
+      body: JSON.stringify(payload),
     }
   )
     .then(response => response.json())

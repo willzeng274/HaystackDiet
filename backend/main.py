@@ -79,25 +79,20 @@ app.add_middleware(
 
 
 class Restrictions(BaseModel):
-    GLUTEN: int
-    LACTOSE: int
-    VEGAN: int
-    VEGETARIAN: int
-    HALAL: int
-    NUT: int
-    NORMAL: int
+    restrictions: dict | None
+    days: int | None
+    long: float | None
+    lat: float | None
 
-@app.post("/generate-meal") 
-async def generate_meal_schedule(restrictions: Restrictions, days: int, long: float, lat: float ):
-    
-    restaurantData = RestaurantMenuFinder.extract_menu_content(long, lat)
-    print(restaurantData)
-    for restaurant in restaurantData: 
+@app.post("/generate-meal")
+async def generate_meal_schedule(r: Restrictions):
+ 
+    restaurantData = RestaurantMenuFinder.get_restaurant_menus(r.long, r.lat)
+    print("RESTAURANT DATA: ", restaurantData)
+    for restaurant in restaurantData:
         print(restaurant["name"], end=":")
-        # print(restaurant["name"])
-     
-    
-
+        # Use the restrictions data here
+        print(restaurant["name"])
 
 # CSV Handling Section 
 @app.post("/generate-meals-csv")

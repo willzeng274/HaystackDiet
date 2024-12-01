@@ -16,6 +16,7 @@ import { Fence } from './models/fence';
 import { Barn } from './models/barn';
 import { BathroomSign } from './models/bathroom';
 import Animated from './animated';
+import useHorseStore from './store';
 
 const Crosshair = () => (
   <div
@@ -124,7 +125,20 @@ const CameraController = ({ bounds, speed = 0.2 }: { bounds: { x: [number, numbe
   return null;
 };
 
+function HorseSystem() {
+  const queueNewHorse = useHorseStore((state) => state.queueNewHorse);
+  useFrame((state, delta) => {
+    if (state.clock.elapsedTime % 1 < delta) {
+      queueNewHorse();
+    }
+  });
+  return null;
+}
+
 export default function Game() {
+  const horses = useHorseStore((state) => state.horses);
+  const queueNewHorse = useHorseStore((state) => state.queueNewHorse);
+
   return (
     <div className="w-screen h-screen">
       <Crosshair />
@@ -134,6 +148,7 @@ export default function Game() {
       >
         <Suspense fallback={null}>
           <OrbitControls />
+          <HorseSystem />
           {/* <CameraController
             bounds={{ x: [-1, 1], z: [-4, 4] }}
           />
@@ -155,6 +170,11 @@ export default function Game() {
 
           <Walls />
           <Animated Component={Dave} />
+          {/* {
+            horses.map((horse, index) => (
+              <Animated Component={Dave} />
+            ))
+          } */}
           {/* <Dave action={"Walk"} position={[-8, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} /> */}
           {/* to [-18, 0, -6] */}
           {/* to [-18, 0, 0] */}
