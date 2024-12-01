@@ -9,9 +9,11 @@ import os
 import pandas as pd
 import logging
 import io
-
+from pydantic import BaseModel
 from llm import find_diet_columns
-
+from enum import IntEnum
+from googlemap import RestaurantMenuFinder
+ 
 # Create a logger
 logger = logging.getLogger(__name__)
 
@@ -66,10 +68,34 @@ app.add_middleware(
 #     SERVED = "SERVED"
 #     FAILED = "FAILED"
 
+
+# GLUTEN 10
+# LACTOSE 12
+# VEGAN 5
+# VEGETARIAN 3
+# HALAL 2
+# NUT 1
+# NORMAL 100
+
+
+class Restrictions(IntEnum):
+    GLUTEN: int
+    LACTOSE: int
+    VEGAN: int
+    VEGETARIAN: int
+    HALAL: int
+    NUT: int
+    NORMAL: int
+
 @app.post("/generate-meal")
-async def generate_meal_schedule(restrictions: str): 
-    # Now generate a meal based on the restrictions and meal count 
-    ...
+async def generate_meal_schedule(restrictions: Restrictions, days: int, long: float, lat: float ):
+    restaurantData = RestaurantMenuFinder.extract_menu_content(long, lat)
+    print(restaurantData)
+    for restaurant in restaurantData: 
+        print(restaurant["name"], end=":")
+        # print(restaurant["name"])
+    
+
 
 # CSV Handling Section 
 @app.post("/generate-meals-csv")
@@ -108,14 +134,24 @@ async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form
         #     "kosher": "KOSHER",
         #     "nut": null
         # }
+
+        # {
+        # gluten: 10
+        # personCount: 100 
+        # nut: 12
+        # }
+        personCount = 0; 
         if llm_response["is_single_dietary_field"]:  
             for row in array: 
                 for entry in row: 
                     if (entry.strip().upper() in restriction_words): 
                         restriction_count[entry.strip()] += 1
+                    else: 
+                        personCount += 1 
         else: 
             print("Several fields, we will not handle this in the demo ;)") # we arent doing this yet! 
 
+        restriction_count["NORMAL"] = personCount
         # print out the list of restriction types and their counts
         return restriction_count
     else:
