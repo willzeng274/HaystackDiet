@@ -8,6 +8,14 @@ import { Ground } from './ground';
 import { Table } from './table';
 import * as THREE from 'three';
 import { Dave } from './horses/dave';
+import { Denis } from './horses/denis';
+import { Dolly } from './horses/dolly';
+import { Dan } from './horses/dan';
+import { Wall } from './wall';
+import Walls from './walls';
+import { Fence } from './fence';
+import { Barn } from './barn';
+import { BathroomSign } from './bathroom';
 
 const Crosshair = () => (
   <div
@@ -88,17 +96,23 @@ const CameraController = ({ bounds, speed = 0.2 }: { bounds: { x: [number, numbe
 
     const right = new THREE.Vector3().crossVectors(camera.up, forward).normalize();
 
+    const isMovingDiagonally =
+      (movement.current.forward || movement.current.backward) &&
+      (movement.current.left || movement.current.right);
+
+    const adjustedSpeed = isMovingDiagonally ? speed * 0.7 : speed;
+
     if (movement.current.forward) {
-      camera.position.add(forward.clone().multiplyScalar(speed));
+      camera.position.add(forward.clone().multiplyScalar(adjustedSpeed));
     }
     if (movement.current.backward) {
-      camera.position.add(forward.clone().multiplyScalar(-speed));
+      camera.position.add(forward.clone().multiplyScalar(-adjustedSpeed));
     }
     if (movement.current.left) {
-      camera.position.add(right.clone().multiplyScalar(speed));
+      camera.position.add(right.clone().multiplyScalar(adjustedSpeed));
     }
     if (movement.current.right) {
-      camera.position.add(right.clone().multiplyScalar(-speed));
+      camera.position.add(right.clone().multiplyScalar(-adjustedSpeed));
     }
 
     camera.position.x = Math.max(bounds.x[0], Math.min(bounds.x[1], camera.position.x));
@@ -129,7 +143,18 @@ export default function Game() {
           <Ground />
           <Table position={[2, 1, -1.8]} />
           <Table position={[2, 1, 1.8]} />
-          <Dave position={[-5, 0, 0]} scale={0.5} rotation={[0, 0, 0]} />
+          <Fence position={[-2, 0, 2.4]} scale={4.5} rotation={[0, Math.PI / 2, 0]} />
+          <Fence position={[-2, 0, -2.4]} scale={4.5} rotation={[0, Math.PI / 2, 0]} />
+
+          <BathroomSign position={[-5, 3, 8]} scale={5} rotation={[0, Math.PI / 2, 0]} />
+
+          <Barn position={[-20, 0, -5]} scale={1.5} rotation={[0, 0, 0]} />
+
+          <Walls />
+          <Dave action={"Walk"} position={[-8, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} />
+          <Denis action={"Walk"} position={[-5, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} />
+          <Dolly action={"Walk"} position={[-11, 0, 0]} scale={0.8} rotation={[0, Math.PI / 2, 0]} />
+          <Dan action={"Run"} position={[-14, 0, 0]} scale={0.35} rotation={[0, Math.PI / 2, 0]} />
         </Suspense>
       </Canvas>
     </div>

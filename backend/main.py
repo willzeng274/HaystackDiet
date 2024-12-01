@@ -69,7 +69,7 @@ app.add_middleware(
 @app.post("/generate-meal")
 async def generate_meal_schedule(restrictions: str): 
     # Now generate a meal based on the restrictions and meal count 
-    
+    ...
 
 # CSV Handling Section 
 @app.post("/generate-meals-csv")
