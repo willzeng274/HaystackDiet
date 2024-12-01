@@ -4,6 +4,12 @@ import * as THREE from 'three';
 import useHorseStore, { Horse, useFoodStore } from './store';
 // import { MathUtils } from 'three';
 
+function playAudio(audioPath: string) {
+    console.log("Playing audio")
+    const audio = new Audio(audioPath);
+    audio.play();
+}
+
 const Animated = ({ Component, horse }: { Component: React.ComponentType<any>, horse: Horse }) => {
     const FRAME_DURATION = 2000; // Change this value to adjust frame duration (in milliseconds)
     const SERVE_FRAME_DURATION = 800; // Change this value to adjust frame duration for served horses (in milliseconds)
@@ -238,6 +244,7 @@ const Animated = ({ Component, horse }: { Component: React.ComponentType<any>, h
                                 // pop the horse
                                 // depending on the restriction, the horse will have different fate
                                 decrementHeatlh();
+                                playAudio("/incorrect_buzzer.mp3");
                                 switch (horse.restriction) {
                                     case "GLUTEN":
                                         popHorse(-1);
