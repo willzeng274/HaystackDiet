@@ -12,7 +12,11 @@ import io
 from pydantic import BaseModel
 from llm import find_diet_columns
 from enum import IntEnum
-from googlemap import RestaurantMenuFinder
+from googlemap import get_restaurant_menus
+from typing import List, Dict
+import random
+import json
+
  
 # Create a logger
 logger = logging.getLogger(__name__)
@@ -84,17 +88,138 @@ class Restrictions(BaseModel):
     long: float | None
     lat: float | None
 
-@app.post("/generate-meal")
-async def generate_meal_schedule(r: Restrictions):
- 
-    restaurantData = RestaurantMenuFinder.get_restaurant_menus(r.long, r.lat)
-    print("RESTAURANT DATA: ", restaurantData)
-    for restaurant in restaurantData:
-        print(restaurant["name"], end=":")
-        # Use the restrictions data here
-        print(restaurant["name"])
+class GenerateMealResponse(BaseModel):
+    restrictions: Restrictions
+    days: int
+    long: float
+    lat: float
+    
+class MenuItem(BaseModel):
+    name: str
+    description: str
+    price: float
+    category: str
+    restrictions: List[str]
 
-# CSV Handling Section 
+class MealPlan(BaseModel):
+    day: int
+    meals: Dict[str, List[Dict[str, any]]]
+
+
+@app.post("/generate-meal") 
+async def generate_meal_schedule(response: GenerateMealResponse):
+    try:
+        restaurantData = get_restaurant_menus(response.long, response.lat)
+        
+        # Simplify restaurant data to reduce prompt size
+        simplified_menu = []
+        for restaurant in restaurantData:
+            menu_items = []
+            for item in restaurant["menu_items"]:
+                menu_items.append({
+                    "name": item["name"],
+                    "price": item["price"],
+                    "restrictions": item["restrictions"],
+                    "category": item["category"]
+                })
+            
+            simplified_menu.append({
+                "name": restaurant["name"],
+                "menu_items": menu_items
+            })
+
+        prompt = f"""Create a {response.days}-day meal plan with 3 meals per day.
+People count per restriction:
+- GLUTEN: {response.restrictions.GLUTEN}
+- LACTOSE: {response.restrictions.LACTOSE}
+- VEGAN: {response.restrictions.VEGAN}
+- VEGETARIAN: {response.restrictions.VEGETARIAN}
+- HALAL: {response.restrictions.HALAL}
+- NUT: {response.restrictions.NUT}
+- NO RESTRICTIONS: {response.restrictions.NORMAL}
+
+Rules:
+1. Use existing menu items or create reasonable alternatives
+2. Mark created items with "(Special Request)"
+3. Ensure each person gets breakfast, lunch, and dinner
+4. Price ranges: Breakfast $8-15, Lunch $12-25, Dinner $15-35
+
+Available Restaurants:
+{json.dumps(simplified_menu, indent=2)}
+
+Return JSON format:
+{{
+    "meal_plans": [
+        {{
+            "day": number,
+            "meals": {{
+                "breakfast": [
+                    {{
+                        "dietary_restriction": string,
+                        "restaurant": string,
+                        "item": string,
+                        "price": number,
+                        "people_count": number,
+                        "is_special_request": boolean
+                    }}
+                ],
+                "lunch": [...],
+                "dinner": [...]
+            }}
+        }}
+    ]
+}}"""
+
+        completion = await client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
+            response_format={ "type": "json_object" },
+            messages=[
+                {"role": "system", "content": "You are a meal planning assistant that creates detailed meal plans based on restaurant data and dietary restrictions."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            timeout=30.0  # Set timeout to 30 seconds
+        )
+        
+        meal_plan = json.loads(completion.choices[0].message.content)
+        return meal_plan
+
+    except Exception as e:
+        logger.error(f"Error generating meal plan: {str(e)}")
+        # Generate a basic fallback meal plan
+        fallback_plan = generate_fallback_meal_plan(response)
+        return fallback_plan
+
+def generate_fallback_meal_plan(response):
+    """Generate a basic meal plan when the API fails"""
+    meal_plans = []
+    for day in range(response.days):
+        meals = {
+            "breakfast": [],
+            "lunch": [],
+            "dinner": []
+        }
+        
+        for restriction, count in response.restrictions.dict().items():
+            if count > 0:
+                for meal_type in meals:
+                    price = 12 if meal_type == "breakfast" else 18 if meal_type == "lunch" else 25
+                    meals[meal_type].append({
+                        "dietary_restriction": restriction,
+                        "restaurant": "Tim Hortons",  # Safe fallback
+                        "item": f"{restriction.title()} Friendly {meal_type.title()} (Special Request)",
+                        "price": price,
+                        "people_count": count,
+                        "is_special_request": True
+                    })
+                    
+        meal_plans.append({
+            "day": day + 1,
+            "meals": meals
+        })
+    
+    return {"meal_plans": meal_plans}
+
 @app.post("/generate-meals-csv")
 async def generate_meals_csv(csv_file: UploadFile = File(...), count: int = Form(...)):
     print("FIlE", csv_file, "COUNT", count)

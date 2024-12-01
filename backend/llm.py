@@ -9,19 +9,20 @@ import pandas as pd
 from pydantic import BaseModel
 
 from validator import OutputValidator
+from typing import Optional
 
 class DietFields(BaseModel):
-    gluten: str | None
-    lactose: str | None
-    vegan: str | None
-    vegetarian: str | None
-    halal: str | None
-    kosher: str | None
-    nut: str | None
+    gluten: Optional[str]
+    lactose: Optional[str]
+    vegan: Optional[str]
+    vegetarian: Optional[str]
+    halal: Optional[str]
+    kosher: Optional[str]
+    nut: Optional[str]
 
 class DietOutput(BaseModel):
     is_single_dietary_field: bool
-    single_dietary_field: str | None
+    single_dietary_field: Optional[str]
     dietary_fields: DietFields
 
 def find_diet_columns(cols: pd.Index):
