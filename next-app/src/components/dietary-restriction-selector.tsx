@@ -2,77 +2,78 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
+import { Button } from "@/components/ui/button"
+import { GiWheat, GiMilkCarton, GiPlantSeed, GiCarrot, GiPeanut } from 'react-icons/gi'
+import { FaMosque } from 'react-icons/fa'
 
 const dietaryRestrictions = [
-  { id: 'gluten', label: 'Gluten', icon: '🌾' },
-  { id: 'lactose', label: 'Lactose', icon: '🥛' },
-  { id: 'vegan', label: 'Vegan', icon: '🌱' },
-  { id: 'vegetarian', label: 'Vegetarian', icon: '🥗' },
-  { id: 'halal', label: 'Halal', icon: '🕌' },
-  { id: 'kosher', label: 'Kosher', icon: '✡️' },
-  { id: 'nutFree', label: 'Nut Free', icon: '🥜' },
+  { id: 'gluten', label: 'Gluten', icon: GiWheat },
+  { id: 'lactose', label: 'Lactose', icon: GiMilkCarton },
+  { id: 'vegan', label: 'Vegan', icon: GiPlantSeed },
+  { id: 'vegetarian', label: 'Vegetarian', icon: GiCarrot },
+  { id: 'halal', label: 'Halal', icon: FaMosque },
+  { id: 'nutFree', label: 'Nut Free', icon: GiPeanut },
 ]
 
-export function DietaryRestrictionSelector({ onSubmit }: { onSubmit: (data: any) => void }) {
-  const [selections, setSelections] = useState<Record<string, { required: boolean, importance: number }>>({})
+export default function DietaryRestrictions({ onSubmit }: { onSubmit: (data: any) => void }) {
+  const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([])
 
-  const handleCheckboxChange = (id: string, checked: boolean) => {
-    setSelections(prev => ({
-      ...prev,
-      [id]: { ...prev[id], required: checked }
-    }))
-  }
-
-  const handleSliderChange = (id: string, value: number[]) => {
-    setSelections(prev => ({
-      ...prev,
-      [id]: { ...prev[id], importance: value[0] }
-    }))
+  const handleRestrictionToggle = (id: string) => {
+    setSelectedRestrictions(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    )
   }
 
   const handleSubmit = () => {
-    onSubmit(selections)
+    console.log('Selected restrictions:', selectedRestrictions)
+    onSubmit(selectedRestrictions)
+    // Here you would typically send the data to your backend
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center mb-4">Select Dietary Restrictions</h2>
-      {dietaryRestrictions.map(restriction => (
+    <>
+      <h1 className="text-3xl font-bold text-center mb-8 text-pink-800">Choose dietary restrictions to train for</h1>
+        <div className="space-y-6">
+          {dietaryRestrictions.map(({ id, label, icon: Icon }) => (
+            <motion.div
+              key={id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              className="group"
+            >
+              <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl transition-all duration-300 group-hover:shadow-md">
+                <Checkbox
+                  id={id}
+                  checked={selectedRestrictions.includes(id)}
+                  onCheckedChange={() => handleRestrictionToggle(id)}
+                  className="w-6 h-6 border-2 border-pink-400 text-pink-600 rounded-md focus:ring-pink-500 focus:ring-offset-2"
+                />
+                <Label
+                  htmlFor={id}
+                  className="flex items-center space-x-3 text-lg cursor-pointer group-hover:text-pink-700 transition-colors duration-200"
+                >
+                  <Icon className="text-2xl text-pink-500 group-hover:text-pink-600 transition-colors duration-200" />
+                  <span>{label}</span>
+                </Label>
+              </div>
+            </motion.div>
+          ))}
+        </div>
         <motion.div
-          key={restriction.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center space-x-4 bg-white/10 p-4 rounded-lg"
+          className="mt-8"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Checkbox
-            id={restriction.id}
-            checked={selections[restriction.id]?.required || false}
-            onCheckedChange={(checked) => handleCheckboxChange(restriction.id, checked as boolean)}
-          />
-          <Label htmlFor={restriction.id} className="flex items-center space-x-2 text-lg">
-            <span className="text-2xl">{restriction.icon}</span>
-            <span>{restriction.label}</span>
-          </Label>
-          {selections[restriction.id]?.required && (
-            <div className="flex-1">
-              <Slider
-                defaultValue={[5]}
-                max={10}
-                step={1}
-                onValueChange={(value) => handleSliderChange(restriction.id, value)}
-              />
-              <div className="text-xs text-center mt-1">Importance: {selections[restriction.id]?.importance || 5}</div>
-            </div>
-          )}
+          <Button
+            onClick={handleSubmit}
+            className="w-full bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 text-white py-5 rounded-xl transition-all duration-300 text-lg font-semibold shadow-lg hover:shadow-xl"
+          >
+            Gamify
+          </Button>
         </motion.div>
-      ))}
-      <Button onClick={handleSubmit} className="w-full">Submit</Button>
-    </div>
+    </>
   )
 }
-

@@ -98,7 +98,7 @@ const useFoodStore = create<FoodStore>((set) => ({
       restriction: "NORMAL",
     },
     GLUTEN: {
-      name: "Gluten",
+      name: "Gluten-free",
       restriction: "GLUTEN",
     },
     LACTOSE: {
@@ -118,7 +118,7 @@ const useFoodStore = create<FoodStore>((set) => ({
       restriction: "HALAL",
     },
     NUT: {
-      name: "Nut",
+      name: "Nut-free",
       restriction: "NUT",
     },
     // KOSHER: {

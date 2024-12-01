@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DietaryRestrictionSelector } from '@/components/dietary-restriction-selector'
+import DietaryRestrictionSelector from '@/components/dietary-restriction-selector'
 import { FileUpload } from '@/components/file-upload'
 import { StatisticsDisplay } from '@/components/statistics-display'
 import { MealSchedule } from '@/components/meal-schedule'
@@ -29,8 +29,9 @@ export default function PlanEvent() {
   }
 
   const handleManualSelection = (data: any) => {
-    setDietaryData(data)
-    setStep(2)
+    // setDietaryData(data)
+    console.log("Manual selection data", data);
+    // setStep(2)
   }
 
   const handleConfirm = () => {

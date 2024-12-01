@@ -40,8 +40,8 @@ export function Food(props: any) {
         position={[0, 0.5, 0]}
         center
       >
-        <div className="p-4 bg-white bg-opacity-50">
-          <h1 className="text-2xl">{props.food.name}</h1>
+        <div className="p-4 bg-white bg-opacity-50 pointer-events-none">
+          <h1 className="text-2xl text-center">{props.food.name}</h1>
         </div>
       </Html>
       <mesh

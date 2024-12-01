@@ -22,6 +22,10 @@ import { FarmHouse } from './models/farm_house';
 import { Silo } from './models/silo';
 import { Walkway } from './models/walkway';
 import { Road } from './models/road';
+import { BuildingLg } from './models/building_lg';
+import { Crops } from './models/crops';
+import { Haystack } from './models/haystack';
+import { BuildingMd } from './models/building_md';
 
 const Crosshair = () => (
   <div
@@ -181,6 +185,7 @@ function FloatingText() {
               background: 'rgba(0, 0, 0, 0.5)',
               padding: '10px',
               borderRadius: '5px',
+              pointerEvents: 'none',
             }}
           >
             {currFoods[currFood as Restriction].name}
@@ -189,6 +194,54 @@ function FloatingText() {
       </group>
     </group>
   );
+}
+
+const SentenceMapping: {
+  [k in Restriction]: string[];
+} = {
+  // generate some random sentences associated with each restriction
+  "NORMAL": [
+    // no dietary restrictions, normal food
+    "Hello, I'm feeling hungry! Can I have any food? Please and thank you.",
+    "Hi, I'm feeling peckish! Can I have a snack? Thanks!",
+    "Hello, could I have a meal please? I'm feeling hungry.",
+  ],
+  "VEGETARIAN": [
+    // no meat
+    "Hi, I'm vegetarian, can I have a vegetarian meal? Thanks!",
+    "Hello, I don't eat meat, can I have a vegetarian dish? Thanks!",
+    "Hello, I'm a vegetarian, can I have a vegetarian meal? Thanks!",
+  ],
+  "VEGAN": [
+    // no animal products
+    "Hi, I'm vegan so I can't eat animal products, can I have a vegan meal?",
+    "Hello, I'm vegan, can I have a vegan meal please? Thanks!",
+    "Hi, I'm vegan, can I have a vegan dish? Thanks!",
+  ],
+  "GLUTEN": [
+    // no gluten
+    "Hello, I'm gluten intolerant, can I have a gluten-free meal?",
+    "Hi, I can't eat gluten, can I have a gluten-free dish? Thanks!",
+    "Hello, I'm gluten intolerant, can I have a gluten-free meal? Thanks!",
+  ],
+  "HALAL": [
+    // no pork
+    "Hello, I'm Muslim, can I have a halal meal? Thanks!",
+    "Hi, I'm Muslim, can I have a halal dish? Thanks!",
+    "Hello, I'm Muslim, can I have a halal meal? Thanks!",
+  ],
+  "LACTOSE": [
+    // no dairy
+    "Hello, I'm lactose intolerant, can I have a dairy-free meal? Thanks!",
+    "Hi, I can't eat dairy, can I have a dairy-free dish? Thanks!",
+    "Hello, I'm lactose intolerant, can I have a dairy-free meal? Thanks!",
+  ],
+  "NUT": [
+    // no nuts
+    "Hello, I'm allergic to nuts, can I have a nut-free meal? Thanks!",
+    "Hi, I can't eat nuts, can I have a nut-free dish? Thanks!",
+    "Hello, I'm allergic to nuts, can I have a nut-free meal? Thanks!",
+  ]
 }
 
 export default function Game() {
@@ -207,12 +260,39 @@ export default function Game() {
   //   console.log(servedHorses);
   // }, [servedHorses]);
 
+  function readTextAloud(text: string) {
+    if (!('speechSynthesis' in window)) {
+      console.error("Your browser does not support the Web Speech API.");
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.rate = 2.5; // Speed (0.1 to 10)
+    utterance.pitch = Math.random() * 2; // Pitch (0 to 2)
+    utterance.volume = 1; // Volume (0 to 1)
+
+    speechSynthesis.speak(utterance);
+  }
+  
+  const mapping = useMemo(() => {
+    return horses && horses[0] && SentenceMapping[horses[0].restriction][Math.floor(Math.random() * SentenceMapping[horses[0].restriction].length)];
+  }, [dialogueActive]);
+
+  useEffect(() => {
+    if (horses && horses.length > 0 && dialogueActive) {
+      readTextAloud(mapping);
+    }
+    // if (horses && horses.length > 0 && dialogueActive) readTextAloud(`Hello! I would like to get something ${horses[0].restriction.toLowerCase()} please and thanks.`);
+  }, [dialogueActive]);
+
   return (
     <div className="w-screen h-screen">
       {dialogueActive && (
         // can you make this bottom center fixed with relative content width and min width
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/50 px-4 pb-4 rounded-lg min-w-[300px] w-[50%] max-w-[800px] z-[9999]">
-          <TextGenerateEffect className="text-white" words={`Hello! I would like to get something ${horses[0].restriction.toLowerCase()} please and thanks.`} />
+          <TextGenerateEffect className="text-white" words={mapping} />
+          {/* <TextGenerateEffect className="text-white" words={`Hello! I would like to get something ${horses[0].restriction.toLowerCase()} please and thanks.`} /> */}
         </div>
       )}
       {/* top right displaying a heart + number (health), and curr food */}
@@ -231,20 +311,36 @@ export default function Game() {
           <Cinema position={[-40, 0, 10]} rotation={[0, Math.PI / 2, 0]} />
           <FarmHouse position={[0, 0, 25]} scale={0.8} />
           {
-            Array.from({ length: 20}).map((_, i) => <Walkway position={[-4 - 1.6 * i, 0.1, 0]} rotation={[0, Math.PI / 2, 0]} />)
+            Array.from({ length: 20 }).map((_, i) => <Walkway key={i} position={[-4 - 1.6 * i, 0.1, 0]} rotation={[0, Math.PI / 2, 0]} />)
           }
           {
-            Array.from({ length: 40}).map((_, i) => <Walkway position={[-35, 0.1, 1.6 * (i+1)]} rotation={[0, Math.PI / 2, 0]} />)
+            Array.from({ length: 40 }).map((_, i) => <Walkway key={i} position={[-35, 0.1, 1.6 * (i + 1)]} rotation={[0, Math.PI / 2, 0]} />)
           }
-          <Road position={[0, 0.5, 0]} />
-          {/* {
-            Array.from({ length: 20 }).map((_, i) => <Road position={[0, 0.1, 0]} />)
-          } */}
+          {
+            Array.from({ length: 10 }).map((_, i) => <Road key={i} position={[-25, -0.15, 6 + 5 * i]} scale={0.05} rotation={[0, Math.PI / 2, 0]} />)
+          }
+          {
+            Array.from({ length: 10 }).map((_, i) => <Road key={i} position={[-30, -0.15, 6 + 5 * i]} scale={0.05} rotation={[0, Math.PI / 2, 0]} />)
+          }
+          <BuildingLg position={[5, 0, -25]} scale={8} rotation={[0, 0, 0]} />
+          <BuildingLg position={[-12, 0, -30]} scale={8} rotation={[0, 0, 0]} />
+          <BuildingLg position={[-45, 0, 35]} scale={10} rotation={[0, Math.PI / 2, 0]} />
+          <BuildingLg position={[-45, 0, 58]} scale={10} rotation={[0, Math.PI / 2, 0]} />
+          <Haystack position={[-10, 0, 7]} scale={0.7} />
+          <Haystack position={[-16, 0, 5]} scale={0.7} rotation={[0, Math.PI / 2, 0]} />
+          <Crops position={[-5, 0, -3]} scale={2} />
+          <Crops position={[-9, 0, -3]} scale={2} />
+          <Crops position={[-13, 0, -3]} scale={2} />
+          <Crops position={[-5, 0, -6.5]} scale={2} />
+          <Crops position={[-9, 0, -6.5]} scale={2} />
+          <Crops position={[-13, 0, -6.5]} scale={2} />
           <Silo position={[10, 0, 10]} scale={1.3} />
           <Silo position={[10, 0, 5]} scale={1.3} />
           <Silo position={[10, 0, 0]} scale={1.3} />
           <Silo position={[10, 0, -5]} scale={1.3} />
           <Silo position={[10, 0, -10]} scale={1.3} />
+          <BuildingMd position={[-50, 0, -13]} scale={10} rotation={[0, Math.PI / 2, 0]} />
+          <BuildingMd position={[-30, 0, -15]} scale={10} />
           {/* <OrbitControls /> */}
           <HorseSystem />
           <CameraController
