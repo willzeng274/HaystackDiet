@@ -74,7 +74,7 @@ export default function Home() {
                 </motion.div>
                 <h2 className="text-2xl font-semibold text-white mb-4">Sandbox Mode</h2>
                 <Button asChild variant="secondary" className="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white">
-                  <Link href="/sandbox">Enter Sandbox</Link>
+                  <Link href="/game">Enter Training Game</Link>
                 </Button>
               </CardContent>
             </Card>

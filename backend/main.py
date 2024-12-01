@@ -78,7 +78,7 @@ app.add_middleware(
 # NORMAL 100
 
 
-class Restrictions(IntEnum):
+class Restrictions(BaseModel):
     GLUTEN: int
     LACTOSE: int
     VEGAN: int
@@ -87,13 +87,15 @@ class Restrictions(IntEnum):
     NUT: int
     NORMAL: int
 
-@app.post("/generate-meal")
+@app.post("/generate-meal") 
 async def generate_meal_schedule(restrictions: Restrictions, days: int, long: float, lat: float ):
+    
     restaurantData = RestaurantMenuFinder.extract_menu_content(long, lat)
     print(restaurantData)
     for restaurant in restaurantData: 
         print(restaurant["name"], end=":")
         # print(restaurant["name"])
+     
     
 
 

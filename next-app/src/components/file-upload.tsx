@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Upload, Check } from 'lucide-react'
 import { UploadButton } from './upload-button'
 
-export function FileUpload({ onUpload, mealCount, setDietaryData }: { onUpload: (file: File) => void, mealCount: number, setDietaryData: any }) {
+export function FileUpload({ onUpload, dayCount, setDietaryData }: { onUpload: (file: File) => void, dayCount: number, setDietaryData: any }) {
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadComplete, setUploadComplete] = useState(false)
@@ -25,7 +25,7 @@ export function FileUpload({ onUpload, mealCount, setDietaryData }: { onUpload: 
       const formData = new FormData();
       formData.append('csv_file', file);
       console.log("sending file", file);
-      formData.append('count', mealCount.toString());
+      formData.append('count', dayCount.toString());
       fetch('http://localhost:8000/generate-meals-csv', {
         method: 'POST',
         body: formData,

@@ -1,4 +1,4 @@
-import { Wall } from "./wall";
+import { Wall } from "./models/wall";
 
 export default function Walls(props: any) {
     return (
@@ -29,7 +29,14 @@ export default function Walls(props: any) {
             <Wall position={[3, 0, -4.5]} />
             <Wall position={[3, 2, -4.5]} />
 
-            <Wall position={[4, 1, -4.7]} rotation={[0, Math.PI / 2, 0,0]} />
+            <Wall position={[-5.02, 0, 5]} rotation={[0, Math.PI / 2, 0]} />
+            <Wall position={[-5.02, 2, 5]} rotation={[0, Math.PI / 2, 0]} />
+            <Wall position={[-4, 2, 6.2]} rotation={[0, 0, 0]} />
+            <Wall position={[-4, 0, 6.2]} rotation={[0, 0, 0]} />
+            <Wall position={[-2, 2, 6.2]} rotation={[0, 0, 0]} />
+            <Wall position={[-2, 0, 6.2]} rotation={[0, 0, 0]} />
+
+
 
 
         </group>

@@ -1,7 +1,8 @@
 import * as THREE from 'three'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
-import { GLTF } from 'three-stdlib'
+import { GLTF, SkeletonUtils } from 'three-stdlib'
+import { useGraph } from '@react-three/fiber'
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -36,15 +37,36 @@ interface MyGLTFResult extends GLTFResult {
 
 export function Dan(props: any) {
   const group = useRef<THREE.Group>()
-  const { nodes, materials, animations } = useGLTF('dan.glb') as MyGLTFResult
+  const { materials, animations, scene } = useGLTF('dan.glb') as MyGLTFResult
+  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const { nodes }: { nodes: any } = useGraph(clone);
   const { actions } = useAnimations(animations, group);
+  const [action, setAction] = React.useState<ActionName>('Armature|Idle');
+
+  function transitionTo(nextActionKey: string, duration = 1) {
+      console.log("Called", nextActionKey, action)
+      const currentAction = actions[action];
+      const nextAction = actions['Armature|'+nextActionKey as ActionName];
+      if (!nextAction || currentAction === nextAction) return;
+      // console.log(nextActionKey)
+      // Function inspired by: https://github.com/mrdoob/three.js/blob/master/examples/webgl_animation_skinning_blending.html
+      nextAction.enabled = true;
+      if (currentAction) {
+          currentAction.crossFadeTo(nextAction, duration, true);
+      }
+      // Not sure why I need this but the source code does not
+      nextAction.play();
+      setAction('Armature|'+nextActionKey as ActionName);
+  }
 
   useEffect(() => {
-    if (props.action) {
-        const action = actions[('Armature|' + props.action) as ActionName];
-        if (!action) return;
-        action.reset().play();
-    }
+      if (props.action) {
+          const action = actions['Armature|'+props.action as ActionName];
+          if (!action) return;
+
+          transitionTo(props.action, 0.2);
+          // action.reset().play();
+      }
   }, [props.action]);
   /* add these code to all horse animations */
   return (

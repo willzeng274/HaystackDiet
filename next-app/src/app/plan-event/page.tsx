@@ -52,7 +52,7 @@ export default function PlanEvent() {
             <TabsContent value="csv">
               <Card>
                 <CardContent className="pt-6">
-                  <Label htmlFor="mealCount" className="py-2 text-lg font-bold block">Number of Meals</Label>
+                  <Label htmlFor="mealCount" className="py-2 text-lg font-bold block">Amount of days for event</Label>
                   <Input
                     id="mealCount"
                     className="mb-4"
@@ -62,7 +62,7 @@ export default function PlanEvent() {
                     min={1}
                     max={10}
                   />
-                  <FileUpload onUpload={handleFileUpload} mealCount={mealCount} setDietaryData={setDietaryData} />
+                  <FileUpload onUpload={handleFileUpload} dayCount={mealCount} setDietaryData={setDietaryData} />
                 </CardContent>
               </Card>
             </TabsContent>

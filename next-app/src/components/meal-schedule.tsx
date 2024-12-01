@@ -15,22 +15,19 @@ const dietaryRestrictions = {
   LACTOSE: 'Lactose-Free'
 }
 
-const generateMealSchedule = (mealCount: number, dietaryData: any) => {
+const generateMealSchedule = (dayCount: number, dietaryData: any) => {
 
   console.log("GENERATE MEAL SCHEDULE"); 
 
   // Fetch the meals from the API 
   const meals = Array();
-  fetch('http://localhost:3000/generate-meal', 
+  const formData = new FormData();
+  formData.append('days', dayCount);
+  formData.append('dietaryData', JSON.stringify(dietaryData));
+  fetch('http://localhost:8000/generate-meal', 
     {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        mealCount: mealCount,
-        dietaryData: dietaryData
-      })
+      body: formData
     }
   )
     .then(response => response.json())
@@ -43,7 +40,7 @@ const generateMealSchedule = (mealCount: number, dietaryData: any) => {
 
   // This is a placeholder function. In a real application, you'd have a more sophisticated
   // algorithm to generate meal schedules based on dietary restrictions and preferences.
-  return Array(mealCount).fill(null).map((_, index) => ({
+  return Array(dayCount).fill(null).map((_, index) => ({
     name: `Meal ${index + 1}`,
     description: 'A balanced meal suitable for all dietary restrictions',
     restrictions: Object.keys(dietaryData).filter(() => Math.random() > 0.5)

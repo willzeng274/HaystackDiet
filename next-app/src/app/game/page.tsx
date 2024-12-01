@@ -1,21 +1,21 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { PointerLockControls, Sky } from '@react-three/drei'
+import { OrbitControls, PointerLockControls, Sky } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { Suspense, useEffect, useRef } from 'react'
 import { Ground } from './ground';
-import { Table } from './table';
+import { Table } from './models/table';
 import * as THREE from 'three';
-import { Dave } from './horses/dave';
+import Dave from './horses/dave';
 import { Denis } from './horses/denis';
 import { Dolly } from './horses/dolly';
 import { Dan } from './horses/dan';
-import { Wall } from './wall';
 import Walls from './walls';
-import { Fence } from './fence';
-import { Barn } from './barn';
-import { BathroomSign } from './bathroom';
+import { Fence } from './models/fence';
+import { Barn } from './models/barn';
+import { BathroomSign } from './models/bathroom';
+import Animated from './animated';
 
 const Crosshair = () => (
   <div
@@ -84,7 +84,7 @@ const CameraController = ({ bounds, speed = 0.2 }: { bounds: { x: [number, numbe
     };
   }, []);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (!cameraRef) return;
 
     const camera = cameraRef;
@@ -94,13 +94,15 @@ const CameraController = ({ bounds, speed = 0.2 }: { bounds: { x: [number, numbe
     forward.y = 0;
     forward.normalize();
 
+    const speed2 = delta * 50 * speed;
+
     const right = new THREE.Vector3().crossVectors(camera.up, forward).normalize();
 
     const isMovingDiagonally =
       (movement.current.forward || movement.current.backward) &&
       (movement.current.left || movement.current.right);
 
-    const adjustedSpeed = isMovingDiagonally ? speed * 0.7 : speed;
+    const adjustedSpeed = isMovingDiagonally ? speed2 * 0.7 : speed2;
 
     if (movement.current.forward) {
       camera.position.add(forward.clone().multiplyScalar(adjustedSpeed));
@@ -131,10 +133,11 @@ export default function Game() {
         shadows
       >
         <Suspense fallback={null}>
-          <CameraController
+          <OrbitControls />
+          {/* <CameraController
             bounds={{ x: [-1, 1], z: [-4, 4] }}
           />
-          <PointerLockControls pointerSpeed={3} />
+          <PointerLockControls pointerSpeed={2} /> */}
           <Perf position="top-left" />
           <Sky sunPosition={[100, 20, 100]} />
           <ambientLight intensity={0.5} />
@@ -151,10 +154,16 @@ export default function Game() {
           <Barn position={[-20, 0, -5]} scale={1.5} rotation={[0, 0, 0]} />
 
           <Walls />
-          <Dave action={"Walk"} position={[-8, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} />
-          <Denis action={"Walk"} position={[-5, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} />
-          <Dolly action={"Walk"} position={[-11, 0, 0]} scale={0.8} rotation={[0, Math.PI / 2, 0]} />
-          <Dan action={"Run"} position={[-14, 0, 0]} scale={0.35} rotation={[0, Math.PI / 2, 0]} />
+          <Animated Component={Dave} />
+          {/* <Dave action={"Walk"} position={[-8, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} /> */}
+          {/* to [-18, 0, -6] */}
+          {/* to [-18, 0, 0] */}
+          {/* <Dave action={"Walk"} position={[-18, 0, -6]} scale={0.5} rotation={[0, 0, 0]} />
+          <Dave action={"Walk"} position={[-18, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} />
+          <Dave action={"Walk"} position={[-4, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} /> */}
+          {/* <Denis action={"Walk"} position={[-4, 0, 0]} scale={0.5} rotation={[0, Math.PI / 2, 0]} /> */}
+          {/* <Dolly action={"Walk"} position={[-4, 0, 0]} scale={0.8} rotation={[0, Math.PI / 2, 0]} /> */}
+          {/* <Dan action={"Run"} position={[-4, 0, 0]} scale={0.35} rotation={[0, Math.PI / 2, 0]} /> */}
         </Suspense>
       </Canvas>
     </div>
