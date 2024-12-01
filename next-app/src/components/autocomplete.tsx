@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-
+import { Input } from "@/components/ui/input";
 const loadGoogleMapsScript = (apiKey, callback) => {
   if (window.google) {
     callback();
@@ -41,7 +41,7 @@ const AutoCompleteInput = ( setCoordinates ) => {
   }, []);
 
   return (
-    <input
+    <Input
       ref={autocompleteInputRef}
       type="text"
       placeholder="Enter a location"
