@@ -72,8 +72,6 @@ interface MyGLTFResult extends GLTFResult {
 /* add these code to all horse animations */
 
 export default forwardRef<THREE.Group>(function Dave(props: any, ref: React.ForwardedRef<THREE.Group>) {
-    // const group = useRef<THREE.Group>()
-    // const group = ref;
     /* add these code to all horse animations */
     const { animations, scene, materials } = useGLTF('/dave.glb') as MyGLTFResult
     const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);

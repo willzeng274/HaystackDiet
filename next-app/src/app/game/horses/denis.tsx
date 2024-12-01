@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { forwardRef, useEffect, useMemo, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { GLTF, SkeletonUtils } from 'three-stdlib'
 import { useGraph } from '@react-three/fiber'
@@ -69,12 +69,12 @@ interface MyGLTFResult extends GLTFResult {
 }
 /* add these code to all horse animations */
 
-export function Denis(props: any) {
-  const group = useRef<THREE.Group>()
+export default forwardRef<THREE.Group>(function Denis(props: any, ref: React.ForwardedRef<THREE.Group>) {
+  // const group = useRef<THREE.Group>()
   const { materials, animations, scene } = useGLTF('/denis.glb') as MyGLTFResult
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes }: { nodes: any } = useGraph(clone);
-  const { actions } = useAnimations(animations, group);
+  const { actions } = useAnimations(animations, ref as React.MutableRefObject<THREE.Group>);
   const [action, setAction] = React.useState<ActionName>('Idle');
 
   function transitionTo(nextActionKey: ActionName, duration = 1) {
@@ -103,7 +103,7 @@ export function Denis(props: any) {
   }, [props.action]);
   
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={ref} {...props} dispose={null}>
       <group name="Root_Scene">
         <group name="RootNode">
           <group name="AnimalArmature" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
@@ -161,6 +161,6 @@ export function Denis(props: any) {
       </group>
     </group>
   )
-}
+});
 
 useGLTF.preload('/denis.glb')

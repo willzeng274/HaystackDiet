@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { forwardRef, useEffect, useMemo, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { GLTF, SkeletonUtils } from 'three-stdlib'
 import { useGraph } from '@react-three/fiber'
@@ -24,7 +24,6 @@ type ActionName =
   | 'Armature|Walk'
   | 'Armature|WalkSlow'
 
-
 /* add these code to all horse animations */
 interface GLTFAction extends THREE.AnimationClip {
   name: ActionName;
@@ -35,16 +34,16 @@ interface MyGLTFResult extends GLTFResult {
 }
 /* add these code to all horse animations */
 
-export function Dan(props: any) {
-  const group = useRef<THREE.Group>()
+export default forwardRef<THREE.Group>(function Dan(props: any, ref: React.ForwardedRef<THREE.Group>) {
+  // const group = useRef<THREE.Group>()
   const { materials, animations, scene } = useGLTF('dan.glb') as MyGLTFResult
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes }: { nodes: any } = useGraph(clone);
-  const { actions } = useAnimations(animations, group);
+  const { actions } = useAnimations(animations, ref as React.MutableRefObject<THREE.Group>);
   const [action, setAction] = React.useState<ActionName>('Armature|Idle');
 
   function transitionTo(nextActionKey: string, duration = 1) {
-      console.log("Called", nextActionKey, action)
+      // console.log("Called", nextActionKey, action)
       const currentAction = actions[action];
       const nextAction = actions['Armature|'+nextActionKey as ActionName];
       if (!nextAction || currentAction === nextAction) return;
@@ -70,7 +69,7 @@ export function Dan(props: any) {
   }, [props.action]);
   /* add these code to all horse animations */
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={ref} {...props} dispose={null}>
       <group name="Root_Scene">
         <group name="RootNode">
           <group name="Armature" rotation={[-Math.PI / 2, 0, 0]} scale={100}>
@@ -94,6 +93,6 @@ export function Dan(props: any) {
       </group>
     </group>
   )
-}
+});
 
 useGLTF.preload('/dan.glb')

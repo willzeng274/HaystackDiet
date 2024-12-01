@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import React, { useEffect, useRef } from 'react'
+import { Html, useGLTF } from '@react-three/drei'
 import { GLTF } from 'three-stdlib'
 
 type GLTFResult = GLTF & {
@@ -21,10 +21,29 @@ type GLTFResult = GLTF & {
   }
 }
 
-export function food(props: any) {
+function getRandomColor() {
+  const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+  return randomColor;
+}
+
+export function Food(props: any) {
   const { nodes, materials } = useGLTF('/food.glb') as GLTFResult
+  const [colors, setColors] = React.useState<[string, string, string, string]>([getRandomColor(), getRandomColor(), getRandomColor(), getRandomColor()]);
+
+  useEffect(() => {
+    setColors([getRandomColor(), getRandomColor(), getRandomColor(), getRandomColor()]);
+  }, [props.food]);
+
   return (
     <group {...props} dispose={null}>
+      <Html
+        position={[0, 0.5, 0]}
+        center
+      >
+        <div className="p-4 bg-white bg-opacity-50">
+          <h1 className="text-2xl">{props.food.name}</h1>
+        </div>
+      </Html>
       <mesh
         castShadow
         receiveShadow
@@ -35,19 +54,22 @@ export function food(props: any) {
         castShadow
         receiveShadow
         geometry={nodes.styrofoamDinner_1.geometry}
-        material={materials.brownLight}
+        // material={materials.brownLight}
+        material={new THREE.MeshStandardMaterial({ color: colors[0] })}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.styrofoamDinner_1_1.geometry}
-        material={materials.brownDark}
+        // material={materials.brownDark}
+        material={new THREE.MeshStandardMaterial({ color: colors[1] })}
       />
       <mesh
         castShadow
         receiveShadow
         geometry={nodes.styrofoamDinner_1_2.geometry}
-        material={materials.green}
+        // material={materials.green}
+        material={new THREE.MeshStandardMaterial({ color: colors[2] })}
       />
       <mesh
         castShadow
@@ -59,7 +81,8 @@ export function food(props: any) {
         castShadow
         receiveShadow
         geometry={nodes.styrofoamDinner_1_4.geometry}
-        material={materials.greenDark}
+        // material={materials.greenDark}
+        material={new THREE.MeshStandardMaterial({ color: colors[3] })}
       />
     </group>
   )
